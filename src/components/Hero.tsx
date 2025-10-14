@@ -4,9 +4,10 @@ export default function Hero() {
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
       <div
-        className="absolute inset-0 bg-cover bg-center opacity-40"
+        className="absolute inset-0 bg-cover  bg-[position:center_24%] opacity-100"
         style={{
-          backgroundImage: 'url(https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=1920)',
+          backgroundImage: 'url(https://images.pexels.com/photos/1959036/pexels-photo-1959036.jpeg)',
+           backgroundSize: "100%",
         }}
       />
 
@@ -15,7 +16,7 @@ export default function Hero() {
       <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="animate-fade-in-up">
           <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold text-white mb-6 tracking-tight">
-            AVEON
+            AØN
           </h1>
           <p className="text-xl sm:text-2xl lg:text-3xl text-white/90 mb-4 font-light tracking-wide">
             Be Relentless, Be AVEON
