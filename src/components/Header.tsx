@@ -14,7 +14,7 @@ export default function Header() {
             </a>
 
             <div className="hidden md:flex space-x-8">
-              <a href="#new" className="text-sm font-medium hover:text-gray-600 transition-colors">
+              <a href="#new" className="text-sm font-medium hover:text-gray-600 transition-colors after:underline after:underline-offset-4 after:decoration-2 after:decoration-gray-400">
                 New Arrivals
               </a>
               <a href="#collection" className="text-sm font-medium hover:text-gray-600 transition-colors">
