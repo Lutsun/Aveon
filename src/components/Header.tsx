@@ -1,6 +1,7 @@
 import { ShoppingBag, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
+
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -13,14 +14,23 @@ export default function Header() {
               AVEON
             </a>
 
-            <div className="hidden md:flex space-x-8">
-              <a href="#new" className="text-sm font-medium hover:text-gray-600 transition-colors after:underline after:underline-offset-4 after:decoration-2 after:decoration-gray-400">
+            <div className="hidden md:flex space-x-8 ">
+              <a href="#new" className="relative text-sm font-medium text-gray-800 hover:text-gray-600 transition-colors 
+               after:content-[''] after:absolute after:left-0 after:bottom-0 
+               after:w-0 after:h-[2px] after:bg-gray-600 after:transition-all after:duration-300
+               hover:after:w-full ">
                 New Arrivals
               </a>
-              <a href="#collection" className="text-sm font-medium hover:text-gray-600 transition-colors">
+              <a href="#collection" className="relative text-sm font-medium text-gray-800 hover:text-gray-600 transition-colors 
+               after:content-[''] after:absolute after:left-0 after:bottom-0 
+               after:w-0 after:h-[2px] after:bg-gray-600 after:transition-all after:duration-300
+               hover:after:w-full">
                 Collection
               </a>
-              <a href="#about" className="text-sm font-medium hover:text-gray-600 transition-colors">
+              <a href="#about" className="relative text-sm font-medium text-gray-800 hover:text-gray-600 transition-colors 
+               after:content-[''] after:absolute after:left-0 after:bottom-0 
+               after:w-0 after:h-[2px] after:bg-gray-600 after:transition-all after:duration-300
+               hover:after:w-full">
                 About
               </a>
             </div>

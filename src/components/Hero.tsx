@@ -35,7 +35,7 @@ export default function Hero() {
             </a>
             <a
               href="#new"
-              className="group border-2 border-white text-white px-8 py-4 rounded-none font-medium hover:bg-white hover:text-black transition-all duration-300 w-full sm:w-auto text-center"
+              className="group border-2 border-white text-white px-8 py-4 rounded-none font-medium hover:bg-white hover:text-black transition-all duration-300 w-full sm:w-auto text-center "
             >
               New Arrivals
             </a>
