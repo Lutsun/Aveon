@@ -1,0 +1,18 @@
+// Connexion à ta base Aveon
+use('aveon-cluster');
+
+// Insérer un produit test
+db.products.insertOne({
+  nom: "T-shirt Aveon Signature",
+  prix: 29.99,
+  description: "T-shirt 100% coton - Collection Signature",
+  categorie: "tshirt", 
+  tailles: ["S", "M", "L", "XL"],
+  couleurs: ["Noir", "Blanc"],
+  stock: 50,
+  image: "signature-noir.jpg",
+  dateCreation: new Date()
+});
+
+// Vérifier l'insertion
+db.products.find().pretty();
