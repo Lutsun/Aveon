@@ -1,7 +1,25 @@
+// src/components/ProductGrid.tsx
 import { useEffect, useState } from 'react';
-import { supabase, Product } from '../lib/supabase';
 import ProductCard from './ProductCard';
 import { Loader2 } from 'lucide-react';
+
+// Définissez l'interface localement
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  collection_id: string | null;
+  image_url: string;
+  images: string[];
+  sizes: string[];
+  colors: Array<{ name: string; hex: string }>;
+  featured: boolean;
+  in_stock: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
 export default function ProductGrid() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,13 +29,14 @@ export default function ProductGrid() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const { data, error } = await supabase
-          .from('products')
-          .select('*')
-          .eq('category', 't-shirt')
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
+        // Appelez VOTRE API Node.js (pas Supabase)
+        const response = await fetch('http://localhost:5000/api/products');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
         setProducts(data || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load products');
@@ -29,6 +48,7 @@ export default function ProductGrid() {
     fetchProducts();
   }, []);
 
+  // Le reste du code reste identique...
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
