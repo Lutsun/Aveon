@@ -5,10 +5,16 @@ const Product = require("../models/product");
 // 🔹 Obtenir tous les produits
 router.get("/", async (req, res) => {
   try {
+    console.log("🔍 Tentative de récupération des produits...");
     const produits = await Product.find().sort({ dateCreation: -1 });
+    console.log(`✅ ${produits.length} produits trouvés`);
     res.json(produits);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("❌ Erreur dans GET /api/produits:", error);
+    res.status(500).json({ 
+      message: error.message,
+      stack: error.stack 
+    });
   }
 });
 

@@ -3,22 +3,20 @@ import { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import { Loader2 } from 'lucide-react';
 
-// Définissez l'interface localement
+// Interface adaptée à votre modèle Mongoose
 export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  collection_id: string | null;
-  image_url: string;
+  _id: string; // MongoDB utilise _id
+  nom: string; 
+  prix: number;
+  image: string;
   images: string[];
-  sizes: string[];
-  colors: Array<{ name: string; hex: string }>;
-  featured: boolean;
-  in_stock: boolean;
-  created_at: string;
-  updated_at: string;
+  description: string;
+  categorie: string;
+  tailles: string[];
+  couleurs: string[];
+  stock: number;
+  tags: string[];
+  dateCreation: string;
 }
 
 export default function ProductGrid() {
@@ -29,8 +27,8 @@ export default function ProductGrid() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        // Appelez VOTRE API Node.js (pas Supabase)
-        const response = await fetch('http://localhost:5000/api/products');
+        // API backend
+        const response = await fetch('http://localhost:5000/api/produits');
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -40,6 +38,7 @@ export default function ProductGrid() {
         setProducts(data || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load products');
+        console.error('Erreur de chargement:', err);
       } finally {
         setLoading(false);
       }
@@ -48,7 +47,6 @@ export default function ProductGrid() {
     fetchProducts();
   }, []);
 
-  // Le reste du code reste identique...
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -76,7 +74,7 @@ export default function ProductGrid() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product._id} product={product} />
       ))}
     </div>
   );
