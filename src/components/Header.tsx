@@ -1,24 +1,27 @@
 import { ShoppingBag, Menu, X } from 'lucide-react';
 import { useState } from 'react';
-
+import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { getCartCount, setIsCartOpen } = useCart();
+  const cartCount = getCartCount();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200">
+    <header className="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-200">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="flex items-center space-x-12">
-            <a href="/" className="text-2xl font-bold tracking-wider hover:opacity-70 transition-opacity">
+            <Link to="/" className="text-2xl font-bold tracking-wider hover:opacity-70 transition-opacity">
               AVEON
-            </a>
+            </Link>
 
-            <div className="hidden md:flex space-x-8 ">
+            <div className="hidden md:flex space-x-8">
               <a href="#new" className="relative text-sm font-medium text-gray-800 hover:text-gray-600 transition-colors 
                after:content-[''] after:absolute after:left-0 after:bottom-0 
                after:w-0 after:h-[2px] after:bg-gray-600 after:transition-all after:duration-300
-               hover:after:w-full ">
+               hover:after:w-full">
                 New Arrivals
               </a>
               <a href="#collection" className="relative text-sm font-medium text-gray-800 hover:text-gray-600 transition-colors 
@@ -37,8 +40,16 @@ export default function Header() {
           </div>
 
           <div className="flex items-center space-x-6">
-            <button className="hover:opacity-70 transition-opacity">
+            <button 
+              onClick={() => setIsCartOpen(true)}
+              className="hover:opacity-70 transition-opacity relative"
+            >
               <ShoppingBag className="w-5 h-5" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-gray-900 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </button>
 
             <button
