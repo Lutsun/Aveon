@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Product } from '../components/ProductGrid';
 import { Loader2, ShoppingCart, ArrowLeft, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import Toast from '../components/Toast';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +17,7 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState<string>('');
   const [isAdding, setIsAdding] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -48,8 +50,33 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (product) {
+      // Vérification des options requises
+      const needsSize = product.tailles && product.tailles.length > 0;
+      const needsColor = product.couleurs && product.couleurs.length > 0;
+      
+      if (needsSize && !selectedSize) {
+        setToast({
+          message: 'Veuillez sélectionner une taille',
+          type: 'error'
+        });
+        return;
+      }
+      
+      if (needsColor && !selectedColor) {
+        setToast({
+          message: 'Veuillez sélectionner une couleur',
+          type: 'error'
+        });
+        return;
+      }
+
       setIsAdding(true);
       addToCart(product, quantity, selectedSize, selectedColor);
+      
+      setToast({
+        message: `${quantity} ${product.nom} ajouté au panier !`,
+        type: 'success'
+      });
       
       setTimeout(() => {
         setIsAdding(false);
@@ -82,6 +109,15 @@ export default function ProductDetail() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+      {/* Toast notification */}
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
+
       {/* Bouton de retour */}
       <div className="mb-6">
         <Link 
@@ -146,7 +182,7 @@ export default function ProductDetail() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.nom}</h1>
             <div className="flex items-center gap-4">
-              <span className="text-2xl font-bold text-gray-900">${product.prix}</span>
+              <span className="text-2xl font-bold text-gray-900">{product.prix} FCFA</span>
               <span className={`px-3 py-1 text-xs rounded-full ${
                 product.stock > 0 
                   ? 'bg-green-100 text-green-800' 
@@ -154,11 +190,6 @@ export default function ProductDetail() {
               }`}>
                 {product.stock > 0 ? 'En stock' : 'Rupture de stock'}
               </span>
-              {product.stock > 0 && product.stock < 10 && (
-                <span className="text-sm text-orange-600">
-                  Plus que {product.stock} en stock
-                </span>
-              )}
             </div>
           </div>
 
@@ -242,9 +273,6 @@ export default function ProductDetail() {
                   +
                 </button>
               </div>
-              <span className="ml-4 text-sm text-gray-500">
-                {product.stock} disponible(s)
-              </span>
             </div>
           </div>
 
@@ -252,11 +280,10 @@ export default function ProductDetail() {
             onClick={handleAddToCart}
             disabled={
               product.stock === 0 || 
-              (product.tailles?.length > 0 && !selectedSize) ||
               isAdding
             }
             className={`w-full py-4 px-6 rounded-md flex items-center justify-center gap-2 text-base font-medium transition-all ${
-              product.stock === 0 || (product.tailles?.length > 0 && !selectedSize)
+              product.stock === 0
                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                 : isAdding
                   ? 'bg-green-600 text-white scale-105'
@@ -273,9 +300,7 @@ export default function ProductDetail() {
                 <ShoppingCart className="w-5 h-5" />
                 {product.stock === 0 
                   ? 'Rupture de stock' 
-                  : (product.tailles?.length > 0 && !selectedSize)
-                    ? 'Sélectionnez une taille'
-                    : `Ajouter au panier - $${(product.prix * quantity).toFixed(2)}`
+                  : `Ajouter au panier - ${(product.prix * quantity)} FCFA`
                 }
               </>
             )}
@@ -285,15 +310,11 @@ export default function ProductDetail() {
           <div className="mt-8 space-y-4 text-sm text-gray-600 border-t border-gray-200 pt-6">
             <div className="flex items-center gap-2">
               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-              <span>Livraison gratuite pour les commandes de plus de 100$</span>
+              <span>Livraison gratuite pour les commandes de plus de 15000 Fcfa</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-              <span>Retours gratuits sous 30 jours</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-              <span>Paiement sécurisé</span>
+              <span>Paiement à la livraison en espèce ou par Mobile Money</span>
             </div>
           </div>
         </div>

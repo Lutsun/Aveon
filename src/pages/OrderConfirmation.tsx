@@ -1,3 +1,4 @@
+// src/pages/OrderConfirmation.tsx
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { CheckCircle, Package, ArrowLeft } from 'lucide-react';
@@ -10,7 +11,7 @@ interface Order {
     email: string;
   };
   items: Array<{
-    productId: string;
+    productName: string;
     quantity: number;
     price: number;
     size?: string;
@@ -18,7 +19,6 @@ interface Order {
   }>;
   total: number;
   date: string;
-  status: string;
 }
 
 export default function OrderConfirmation() {
@@ -76,6 +76,14 @@ export default function OrderConfirmation() {
             Un email de confirmation a été envoyé à {order.customerInfo.email}
           </p>
 
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
+            <p className="text-blue-800 text-sm">
+              <strong>✓ Commande envoyée sur WhatsApp</strong><br />
+              Vous avez été redirigé vers WhatsApp pour nous notifier. 
+              Notre équipe traitera votre commande dans les plus brefs délais.
+            </p>
+          </div>
+
           <div className="bg-gray-50 rounded-lg p-6 mb-6 text-left">
             <div className="flex items-center gap-2 mb-4">
               <Package className="w-5 h-5 text-gray-600" />
@@ -95,11 +103,12 @@ export default function OrderConfirmation() {
               {order.items.map((item, index) => (
                 <div key={index} className="flex justify-between text-sm">
                   <span className="text-gray-600">
-                    Article {item.size && `- Taille ${item.size}`}
+                    {item.productName} x{item.quantity}
+                    {item.size && ` - Taille ${item.size}`}
                     {item.color && ` - ${item.color}`}
                   </span>
                   <span className="text-gray-900 font-medium">
-                    {item.quantity} x ${item.price}
+                    {(item.price * item.quantity)} FCFA
                   </span>
                 </div>
               ))}
@@ -107,7 +116,7 @@ export default function OrderConfirmation() {
 
             <div className="border-t pt-4 flex justify-between font-bold text-gray-900">
               <span>Total</span>
-              <span>${order.total.toFixed(2)}</span>
+              <span>{order.total} FCFA</span>
             </div>
           </div>
 

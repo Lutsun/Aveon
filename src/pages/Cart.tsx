@@ -1,20 +1,35 @@
 import { useCart } from '../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, ShoppingBag, ArrowLeft, Plus, Minus } from 'lucide-react';
+import { Trash2, ShoppingBag, ArrowLeft, Plus, Minus, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Cart() {
-  const { cart, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();
+  const { 
+    cart, 
+    removeFromCart, 
+    updateQuantity, 
+    getCartTotal, 
+    clearCart,
+    getItemsWithMissingOptions 
+  } = useCart();
+  
   const navigate = useNavigate();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const missingItems = getItemsWithMissingOptions();
+  const hasMissingOptions = missingItems.length > 0;
 
   const handleQuantityChange = (customId: string, newQuantity: number) => {
     updateQuantity(customId, newQuantity);
   };
 
   const handleCheckout = () => {
+    if (hasMissingOptions) {
+      alert('Veuillez sélectionner la taille et/ou la couleur pour tous les articles avant de continuer');
+      return;
+    }
+    
     setIsCheckingOut(true);
-    // Naviguer vers la page de paiement
     navigate('/checkout');
   };
 
@@ -47,67 +62,107 @@ export default function Cart() {
           <p className="text-gray-600 mt-2">{cart.length} article(s) dans votre panier</p>
         </div>
 
+        {/* Alerte si options manquantes */}
+        {hasMissingOptions && (
+          <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-medium text-yellow-800">Options manquantes</p>
+              <p className="text-sm text-yellow-700">
+                Certains articles nécessitent une sélection de taille ou de couleur.
+                Veuillez les sélectionner depuis la page produit avant de continuer.
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Liste des articles */}
           <div className="lg:col-span-2 space-y-4">
-            {cart.map((item) => (
-              <div key={item.customId} className="bg-white rounded-lg shadow-sm p-4 flex flex-col sm:flex-row gap-4">
-                {/* Image du produit */}
-                <Link to={`/produit/${item.product._id}`} className="sm:w-32 h-32 bg-gray-100 rounded overflow-hidden flex-shrink-0">
-                  <img
-                    src={item.product.image || 'https://via.placeholder.com/128'}
-                    alt={item.product.nom}
-                    className="w-full h-full object-cover"
-                  />
-                </Link>
+            {cart.map((item) => {
+              const needsSize = item.product.tailles && item.product.tailles.length > 0;
+              const needsColor = item.product.couleurs && item.product.couleurs.length > 0;
+              const missingOptions = (needsSize && !item.size) || (needsColor && !item.color);
 
-                {/* Détails du produit */}
-                <div className="flex-1 flex flex-col">
-                  <div className="flex justify-between">
-                    <div>
-                      <Link to={`/produit/${item.product._id}`} className="hover:text-gray-600">
-                        <h3 className="font-semibold text-gray-900">{item.product.nom}</h3>
-                      </Link>
-                      {item.size && (
-                        <p className="text-sm text-gray-600 mt-1">Taille: {item.size}</p>
-                      )}
-                      {item.color && (
-                        <p className="text-sm text-gray-600">Couleur: {item.color}</p>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => removeFromCart(item.customId)}
-                      className="text-gray-400 hover:text-red-500 transition-colors"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
+              return (
+                <div 
+                  key={item.customId} 
+                  className={`bg-white rounded-lg shadow-sm p-4 flex flex-col sm:flex-row gap-4 ${
+                    missingOptions ? 'border-2 border-yellow-300' : ''
+                  }`}
+                >
+                  {/* Image du produit */}
+                  <Link to={`/produit/${item.product._id}`} className="sm:w-32 h-32 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                    <img
+                      src={item.product.image || 'https://via.placeholder.com/128'}
+                      alt={item.product.nom}
+                      className="w-full h-full object-cover"
+                    />
+                  </Link>
 
-                  <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-center border border-gray-300 rounded">
+                  {/* Détails du produit */}
+                  <div className="flex-1 flex flex-col">
+                    <div className="flex justify-between">
+                      <div>
+                        <Link to={`/produit/${item.product._id}`} className="hover:text-gray-600">
+                          <h3 className="font-semibold text-gray-900">{item.product.nom}</h3>
+                        </Link>
+                        
+                        {/* Affichage des options sélectionnées ou manquantes */}
+                        {needsSize && (
+                          <p className={`text-sm mt-1 ${item.size ? 'text-gray-600' : 'text-red-500 font-medium'}`}>
+                            Taille: {item.size || 'Non sélectionnée ⚠️'}
+                          </p>
+                        )}
+                        {needsColor && (
+                          <p className={`text-sm ${item.color ? 'text-gray-600' : 'text-red-500 font-medium'}`}>
+                            Couleur: {item.color || 'Non sélectionnée ⚠️'}
+                          </p>
+                        )}
+                        
+                        {missingOptions && (
+                          <Link 
+                            to={`/produit/${item.product._id}`}
+                            className="text-xs text-blue-600 hover:underline mt-1 inline-block"
+                          >
+                            Cliquez ici pour sélectionner
+                          </Link>
+                        )}
+                      </div>
                       <button
-                        onClick={() => handleQuantityChange(item.customId, item.quantity - 1)}
-                        className="px-2 py-1 hover:bg-gray-50 disabled:opacity-50"
-                        disabled={item.quantity <= 1}
+                        onClick={() => removeFromCart(item.customId)}
+                        className="text-gray-400 hover:text-red-500 transition-colors"
                       >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                      <span className="w-12 text-center text-sm">{item.quantity}</span>
-                      <button
-                        onClick={() => handleQuantityChange(item.customId, item.quantity + 1)}
-                        className="px-2 py-1 hover:bg-gray-50 disabled:opacity-50"
-                        disabled={item.quantity >= item.product.stock}
-                      >
-                        <Plus className="w-4 h-4" />
+                        <Trash2 className="w-5 h-5" />
                       </button>
                     </div>
-                    <p className="font-semibold text-gray-900">
-                      ${(item.product.prix * item.quantity).toFixed(2)}
-                    </p>
+
+                    <div className="flex items-center justify-between mt-4">
+                      <div className="flex items-center border border-gray-300 rounded">
+                        <button
+                          onClick={() => handleQuantityChange(item.customId, item.quantity - 1)}
+                          className="px-2 py-1 hover:bg-gray-50 disabled:opacity-50"
+                          disabled={item.quantity <= 1}
+                        >
+                          <Minus className="w-4 h-4" />
+                        </button>
+                        <span className="w-12 text-center text-sm">{item.quantity}</span>
+                        <button
+                          onClick={() => handleQuantityChange(item.customId, item.quantity + 1)}
+                          className="px-2 py-1 hover:bg-gray-50 disabled:opacity-50"
+                          disabled={item.quantity >= item.product.stock}
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <p className="font-semibold text-gray-900">
+                        ${(item.product.prix * item.quantity).toFixed(2)}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {/* Bouton pour vider le panier */}
             <div className="flex justify-end">
@@ -128,25 +183,46 @@ export default function Cart() {
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between text-gray-600">
                   <span>Sous-total</span>
-                  <span>${getCartTotal().toFixed(2)}</span>
+                  <span>{getCartTotal()} FCFA</span>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Livraison</span>
                   <span>Calculé à l'étape suivante</span>
                 </div>
+                {hasMissingOptions && (
+                  <div className="flex justify-between text-yellow-600 text-sm">
+                    <span>⚠️ Options manquantes</span>
+                    <span>{missingItems.length} article(s)</span>
+                  </div>
+                )}
                 <div className="border-t pt-3 flex justify-between font-semibold text-gray-900">
                   <span>Total</span>
-                  <span>${getCartTotal().toFixed(2)}</span>
+                  <span>{getCartTotal()} FCFA</span>
                 </div>
               </div>
 
               <button
                 onClick={handleCheckout}
-                disabled={isCheckingOut}
-                className="w-full bg-gray-900 text-white py-3 rounded hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                disabled={isCheckingOut || hasMissingOptions}
+                className={`w-full py-3 rounded transition-colors ${
+                  hasMissingOptions
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-gray-900 text-white hover:bg-gray-800'
+                }`}
               >
-                {isCheckingOut ? 'Traitement...' : 'Procéder au paiement'}
+                {hasMissingOptions 
+                  ? 'Sélectionnez les options manquantes' 
+                  : isCheckingOut 
+                    ? 'Traitement...' 
+                    : 'Procéder au paiement'
+                }
               </button>
+
+              {hasMissingOptions && (
+                <p className="text-xs text-center mt-3 text-yellow-600">
+                  Veuillez sélectionner taille/couleur pour tous les articles
+                </p>
+              )}
 
               <Link
                 to="/#collection"

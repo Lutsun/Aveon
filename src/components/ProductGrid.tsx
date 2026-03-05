@@ -1,4 +1,3 @@
-// src/components/ProductGrid.tsx
 import { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import { Loader2 } from 'lucide-react';

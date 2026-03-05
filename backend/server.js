@@ -6,7 +6,7 @@ const connectDB = require("./config/db");
 
 const app = express();
 
-// Middleware CORS (ESSENTIEL)
+// Middleware CORS pour autoriser les requêtes du frontend
 app.use(cors({
   origin: "http://localhost:3000",
   credentials: true
@@ -31,6 +31,8 @@ async function startServer() {
     
     // Routes (UNIQUEMENT après connexion MongoDB)
     app.use("/api/produits", require("./routes/productRoutes"));
+    app.use("/api/commandes", require("./routes/commandeRoutes")); 
+    app.use("/api/notifications", require("./routes/notifications")); 
     
     // Route de test
     app.get("/", (req, res) => {
@@ -50,7 +52,9 @@ async function startServer() {
       console.log(`🛒 Serveur Aveon en marche`);
       console.log(`📍 Port: ${PORT}`);
       console.log(`📍 URL: http://localhost:${PORT}`);
-      console.log(`📍 API: http://localhost:${PORT}/api/produits`);
+      console.log(`📍 API Produits: http://localhost:${PORT}/api/produits`);
+      console.log(`📍 API Commandes: http://localhost:${PORT}/api/commandes`);
+      console.log(`📍 API Notifications: http://localhost:${PORT}/api/notifications`);
       console.log(`📍 MongoDB: ${mongoose.connection.host}`);
       console.log(`=================================`);
     });
@@ -63,3 +67,5 @@ async function startServer() {
 
 // Démarrez le serveur
 startServer();
+
+module.exports = app;

@@ -1,6 +1,7 @@
+// src/components/CartSidebar.tsx
 import { useCart } from '../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
-import { X, Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ShoppingBag, AlertTriangle } from 'lucide-react';
 
 export default function CartSidebar() {
   const { 
@@ -10,11 +11,20 @@ export default function CartSidebar() {
     removeFromCart, 
     updateQuantity, 
     getCartTotal,
-    getCartCount 
+    getCartCount,
+    getItemsWithMissingOptions 
   } = useCart();
   const navigate = useNavigate();
 
+  const missingItems = getItemsWithMissingOptions();
+  const hasMissingOptions = missingItems.length > 0;
+
   const handleCheckout = () => {
+    if (hasMissingOptions) {
+      alert('Veuillez sélectionner la taille et/ou la couleur pour tous les articles avant de continuer');
+      return;
+    }
+    
     setIsCartOpen(false);
     navigate('/checkout');
   };
@@ -51,6 +61,16 @@ export default function CartSidebar() {
             </button>
           </div>
 
+          {/* Alerte options manquantes */}
+          {hasMissingOptions && (
+            <div className="mx-4 mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-yellow-700">
+                Certains articles nécessitent une sélection de taille/couleur.
+              </p>
+            </div>
+          )}
+
           {/* Cart Items */}
           <div className="flex-1 overflow-y-auto p-4">
             {cart.length === 0 ? (
@@ -66,71 +86,91 @@ export default function CartSidebar() {
               </div>
             ) : (
               <div className="space-y-4">
-                {cart.map((item) => (
-                  <div key={item.customId} className="flex gap-3 pb-4 border-b border-gray-100">
-                    {/* Product Image */}
-                    <Link 
-                      to={`/produit/${item.product._id}`}
-                      onClick={() => setIsCartOpen(false)}
-                      className="w-20 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0"
-                    >
-                      <img
-                        src={item.product.image || 'https://via.placeholder.com/80'}
-                        alt={item.product.nom}
-                        className="w-full h-full object-cover"
-                      />
-                    </Link>
+                {cart.map((item) => {
+                  const needsSize = item.product.tailles && item.product.tailles.length > 0;
+                  const needsColor = item.product.couleurs && item.product.couleurs.length > 0;
+                  const missingOptions = (needsSize && !item.size) || (needsColor && !item.color);
 
-                    {/* Product Details */}
-                    <div className="flex-1">
-                      <div className="flex justify-between">
-                        <Link 
-                          to={`/produit/${item.product._id}`}
-                          onClick={() => setIsCartOpen(false)}
-                          className="font-medium text-gray-900 hover:text-gray-600 text-sm"
-                        >
-                          {item.product.nom}
-                        </Link>
-                        <button
-                          onClick={() => removeFromCart(item.customId)}
-                          className="text-gray-400 hover:text-red-500 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                  return (
+                    <div key={item.customId} className="flex gap-3 pb-4 border-b border-gray-100">
+                      {/* Product Image */}
+                      <Link 
+                        to={`/produit/${item.product._id}`}
+                        onClick={() => setIsCartOpen(false)}
+                        className="w-20 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0"
+                      >
+                        <img
+                          src={item.product.image || 'https://via.placeholder.com/80'}
+                          alt={item.product.nom}
+                          className="w-full h-full object-cover"
+                        />
+                      </Link>
 
-                      {item.size && (
-                        <p className="text-xs text-gray-500 mt-1">Taille: {item.size}</p>
-                      )}
-                      {item.color && (
-                        <p className="text-xs text-gray-500">Couleur: {item.color}</p>
-                      )}
-
-                      <div className="flex items-center justify-between mt-2">
-                        <div className="flex items-center border border-gray-200 rounded">
-                          <button
-                            onClick={() => updateQuantity(item.customId, item.quantity - 1)}
-                            className="px-1.5 py-0.5 hover:bg-gray-50 disabled:opacity-50"
-                            disabled={item.quantity <= 1}
+                      {/* Product Details */}
+                      <div className="flex-1">
+                        <div className="flex justify-between">
+                          <Link 
+                            to={`/produit/${item.product._id}`}
+                            onClick={() => setIsCartOpen(false)}
+                            className="font-medium text-gray-900 hover:text-gray-600 text-sm"
                           >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="w-8 text-center text-xs">{item.quantity}</span>
+                            {item.product.nom}
+                          </Link>
                           <button
-                            onClick={() => updateQuantity(item.customId, item.quantity + 1)}
-                            className="px-1.5 py-0.5 hover:bg-gray-50 disabled:opacity-50"
-                            disabled={item.quantity >= item.product.stock}
+                            onClick={() => removeFromCart(item.customId)}
+                            className="text-gray-400 hover:text-red-500 transition-colors"
                           >
-                            <Plus className="w-3 h-3" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
-                        <p className="font-medium text-sm">
-                          ${(item.product.prix * item.quantity).toFixed(2)}
-                        </p>
+
+                        {needsSize && (
+                          <p className={`text-xs mt-1 ${item.size ? 'text-gray-500' : 'text-red-500 font-medium'}`}>
+                            Taille: {item.size || 'Non sélectionnée'}
+                          </p>
+                        )}
+                        {needsColor && (
+                          <p className={`text-xs ${item.color ? 'text-gray-500' : 'text-red-500 font-medium'}`}>
+                            Couleur: {item.color || 'Non sélectionnée'}
+                          </p>
+                        )}
+
+                        {missingOptions && (
+                          <Link 
+                            to={`/produit/${item.product._id}`}
+                            onClick={() => setIsCartOpen(false)}
+                            className="text-xs text-blue-600 hover:underline mt-1 inline-block"
+                          >
+                            Sélectionner
+                          </Link>
+                        )}
+
+                        <div className="flex items-center justify-between mt-2">
+                          <div className="flex items-center border border-gray-200 rounded">
+                            <button
+                              onClick={() => updateQuantity(item.customId, item.quantity - 1)}
+                              className="px-1.5 py-0.5 hover:bg-gray-50 disabled:opacity-50"
+                              disabled={item.quantity <= 1}
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="w-8 text-center text-xs">{item.quantity}</span>
+                            <button
+                              onClick={() => updateQuantity(item.customId, item.quantity + 1)}
+                              className="px-1.5 py-0.5 hover:bg-gray-50 disabled:opacity-50"
+                              disabled={item.quantity >= item.product.stock}
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+                          <p className="font-medium text-sm">
+                            {(item.product.prix * item.quantity)} FCFA
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -140,14 +180,19 @@ export default function CartSidebar() {
             <div className="border-t border-gray-200 p-4">
               <div className="flex justify-between mb-4">
                 <span className="font-medium">Sous-total</span>
-                <span className="font-bold">${getCartTotal().toFixed(2)}</span>
+                <span className="font-bold">{getCartTotal()} FCFA</span>
               </div>
               
               <button
                 onClick={handleCheckout}
-                className="w-full bg-gray-900 text-white py-3 rounded hover:bg-gray-800 transition-colors mb-2"
+                disabled={hasMissingOptions}
+                className={`w-full py-3 rounded transition-colors mb-2 ${
+                  hasMissingOptions
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-gray-900 text-white hover:bg-gray-800'
+                }`}
               >
-                Procéder au paiement
+                {hasMissingOptions ? 'Options manquantes' : 'Procéder au paiement'}
               </button>
               
               <button
@@ -156,6 +201,12 @@ export default function CartSidebar() {
               >
                 Voir le panier
               </button>
+
+              {hasMissingOptions && (
+                <p className="text-xs text-center mt-2 text-yellow-600">
+                  Sélectionnez taille/couleur dans le panier
+                </p>
+              )}
             </div>
           )}
         </div>

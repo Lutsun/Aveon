@@ -1,13 +1,14 @@
-// backend/models/Commande.js
 const mongoose = require('mongoose');
 
 const commandeSchema = new mongoose.Schema({
   items: [{
     productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+    productName: String,
     quantity: { type: Number, required: true, min: 1 },
     size: String,
     color: String,
-    price: { type: Number, required: true }
+    price: { type: Number, required: true },
+    totalPrice: Number
   }],
   customerInfo: {
     firstName: { type: String, required: true },
@@ -17,18 +18,16 @@ const commandeSchema = new mongoose.Schema({
     address: {
       street: { type: String, required: true },
       city: { type: String, required: true },
-      postalCode: { type: String, required: true },
+      postalCode: String,
       country: { type: String, required: true }
-    }
+    },
+    deliveryInstructions: String
   },
-  paymentInfo: {
-    cardNumber: String, // Seulement les 4 derniers chiffres
-    cardName: String
-  },
+  paymentMethod: { type: String, required: true },
   total: { type: Number, required: true },
   status: { 
     type: String, 
-    enum: ['en_attente', 'confirmée', 'expédiée', 'livrée', 'annulée'],
+    enum: ['en_attente', 'confirmée', 'préparation', 'expédiée', 'livrée', 'annulée'],
     default: 'en_attente'
   },
   date: { type: Date, default: Date.now }

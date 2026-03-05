@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2, Truck, MessageCircle, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface CheckoutForm {
@@ -11,13 +11,12 @@ interface CheckoutForm {
   phone: string;
   address: string;
   city: string;
-  postalCode: string;
   country: string;
-  cardNumber: string;
-  cardName: string;
-  expiryDate: string;
-  cvv: string;
+  deliveryInstructions?: string;
 }
+
+// Mon numéro WhatsApp (format international sans le +)
+const MY_WHATSAPP_NUMBER = "221777203162";
 
 export default function Checkout() {
   const { cart, getCartTotal, clearCart } = useCart();
@@ -30,18 +29,54 @@ export default function Checkout() {
     email: '',
     phone: '',
     address: '',
-    city: '',
-    postalCode: '',
-    country: 'France',
-    cardNumber: '',
-    cardName: '',
-    expiryDate: '',
-    cvv: ''
+    city: 'Dakar',
+    country: 'Sénégal',
+    deliveryInstructions: ''
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const generateWhatsAppMessage = (orderData: any, orderId: string) => {
+    const itemsList = orderData.items.map((item: any) => {
+      let itemText = `• ${item.productName} x${item.quantity}`;
+      if (item.size) itemText += ` (Taille: ${item.size})`;
+      if (item.color) itemText += ` (Couleur: ${item.color})`;
+      itemText += ` - ${item.totalPrice}€`;
+      return itemText;
+    }).join('\n');
+
+    const message = 
+`NOUVELLE COMMANDE AVEON
+
+Commande #${orderId.slice(-8)}
+
+Client: ${orderData.customerInfo.firstName} ${orderData.customerInfo.lastName}
+Téléphone: ${orderData.customerInfo.phone}
+Email: ${orderData.customerInfo.email}
+
+Adresse de livraison:
+${orderData.customerInfo.address.street}
+${orderData.customerInfo.address.city}, ${orderData.customerInfo.address.country}
+
+Instructions: ${orderData.customerInfo.deliveryInstructions || 'Aucune'}
+
+Articles commandés:
+${itemsList}
+
+Total de la commande: ${orderData.total}€
+Mode de paiement: Paiement à la livraison
+
+Merci de traiter cette commande rapidement !`;
+
+    return encodeURIComponent(message);
+  };
+
+  const redirectToWhatsApp = (orderData: any, orderId: string) => {
+    const message = generateWhatsAppMessage(orderData, orderId);
+    window.open(`https://wa.me/${MY_WHATSAPP_NUMBER}?text=${message}`, '_blank');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,14 +90,16 @@ export default function Checkout() {
     setLoading(true);
 
     try {
-      // Préparer les données de la commande
+      // 1. Préparer les données de la commande
       const orderData = {
         items: cart.map(item => ({
           productId: item.product._id,
+          productName: item.product.nom,
           quantity: item.quantity,
           size: item.size,
           color: item.color,
-          price: item.product.prix
+          price: item.product.prix,
+          totalPrice: item.product.prix * item.quantity
         })),
         customerInfo: {
           firstName: formData.firstName,
@@ -72,19 +109,17 @@ export default function Checkout() {
           address: {
             street: formData.address,
             city: formData.city,
-            postalCode: formData.postalCode,
             country: formData.country
-          }
+          },
+          deliveryInstructions: formData.deliveryInstructions
         },
-        paymentInfo: {
-          cardNumber: formData.cardNumber.slice(-4), // Ne stocker que les 4 derniers chiffres
-          cardName: formData.cardName
-        },
+        paymentMethod: 'Paiement à la livraison',
         total: getCartTotal(),
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        status: 'en_attente'
       };
 
-      // Envoyer la commande au backend
+      // 2. Envoyer la commande au backend pour sauvegarde
       const response = await fetch('http://localhost:5000/api/commandes', {
         method: 'POST',
         headers: {
@@ -99,14 +134,42 @@ export default function Checkout() {
 
       const result = await response.json();
       
-      // Vider le panier et rediriger vers la page de confirmation
+      // 3. Rediriger vers WhatsApp AVANT d'envoyer l'email
+      redirectToWhatsApp(orderData, result._id);
+      
+      // 4. On attend un peu que WhatsApp s'ouvre
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // 5. MAINTENANT on envoie l'email (le client a déjà envoyé WhatsApp)
+      try {
+        await fetch('http://localhost:5000/api/notifications/send-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            orderId: result._id,
+            orderData,
+            customerEmail: formData.email
+          })
+        });
+        console.log('✅ Email envoyé après confirmation WhatsApp');
+      } catch (emailError) {
+        console.error('Erreur envoi email:', emailError);
+        // On ne bloque pas la redirection même si l'email échoue
+      }
+      
+      // 6. Vider le panier
       clearCart();
-      navigate(`/order-confirmation/${result._id}`);
+      
+      // 7. Rediriger vers la confirmation
+      setTimeout(() => {
+        navigate(`/order-confirmation/${result._id}`);
+      }, 2000);
       
     } catch (error) {
       console.error('Erreur:', error);
       alert('Une erreur est survenue. Veuillez réessayer.');
-    } finally {
       setLoading(false);
     }
   };
@@ -145,7 +208,7 @@ export default function Checkout() {
                 ${step >= 2 ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-300'}`}>
                 2
               </div>
-              <span className="ml-2">Paiement</span>
+              <span className="ml-2">Confirmation</span>
             </div>
           </div>
         </div>
@@ -155,7 +218,10 @@ export default function Checkout() {
           {step === 1 ? (
             // Étape 1 : Informations de livraison
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Informations de livraison</h2>
+              <div className="flex items-center gap-2 mb-4">
+                <Truck className="w-5 h-5 text-gray-700" />
+                <h2 className="text-xl font-semibold text-gray-900">Informations de livraison</h2>
+              </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -212,6 +278,7 @@ export default function Checkout() {
                     value={formData.phone}
                     onChange={handleInputChange}
                     required
+                    placeholder="+221 XX XXX XX XX"
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                   />
                 </div>
@@ -219,7 +286,7 @@ export default function Checkout() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Adresse *
+                  Adresse complète *
                 </label>
                 <input
                   type="text"
@@ -227,6 +294,7 @@ export default function Checkout() {
                   value={formData.address}
                   onChange={handleInputChange}
                   required
+                  placeholder="Numéro, rue, quartier"
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 />
               </div>
@@ -248,126 +316,135 @@ export default function Checkout() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Code postal *
+                    Pays *
                   </label>
                   <input
                     type="text"
-                    name="postalCode"
-                    value={formData.postalCode}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Pays *
-                  </label>
-                  <select
                     name="country"
                     value={formData.country}
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                  >
-                    <option>France</option>
-                    <option>Belgique</option>
-                    <option>Suisse</option>
-                    <option>Luxembourg</option>
-                  </select>
+                  />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Instructions de livraison (optionnel)
+                </label>
+                <textarea
+                  name="deliveryInstructions"
+                  value={formData.deliveryInstructions}
+                  onChange={handleInputChange}
+                  rows={3}
+                  placeholder="Point de repère, code d'accès, etc."
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                />
               </div>
             </div>
           ) : (
-            // Étape 2 : Informations de paiement
+            // Étape 2 : Confirmation de la commande
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Informations de paiement</h2>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Numéro de carte *
-                </label>
-                <input
-                  type="text"
-                  name="cardNumber"
-                  value={formData.cardNumber}
-                  onChange={handleInputChange}
-                  placeholder="1234 5678 9012 3456"
-                  required
-                  maxLength={19}
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                />
+              <div className="flex items-center gap-2 mb-4">
+                <CheckCircle className="w-5 h-5 text-gray-700" />
+                <h2 className="text-xl font-semibold text-gray-900">Confirmation de commande</h2>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Nom sur la carte *
-                </label>
-                <input
-                  type="text"
-                  name="cardName"
-                  value={formData.cardName}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                />
+              {/* Message important sur la redirection WhatsApp */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <div className="flex items-start gap-4">
+                  <div className="bg-blue-100 rounded-full p-2">
+                    <MessageCircle className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-blue-800 text-lg mb-1">
+                      Dernière étape : Confirmation WhatsApp
+                    </h3>
+                    <p className="text-blue-700">
+                      Après avoir cliqué sur "Confirmer la commande", vous serez automatiquement redirigé vers 
+                      WhatsApp avec un message pré-rempli contenant tous les détails.
+                      <strong className="block mt-2">Il vous suffit d'appuyer sur "Envoyer" pour finaliser votre commande.</strong>
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Date d'expiration *
-                  </label>
-                  <input
-                    type="text"
-                    name="expiryDate"
-                    value={formData.expiryDate}
-                    onChange={handleInputChange}
-                    placeholder="MM/AA"
-                    required
-                    maxLength={5}
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                  />
+              {/* Message de paiement à la livraison */}
+              <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                <div className="flex items-start gap-4">
+                  <div className="bg-green-100 rounded-full p-2">
+                    <Truck className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-green-800 text-lg mb-1">
+                      Paiement à la livraison
+                    </h3>
+                    <p className="text-green-700">
+                      Vous paierez <span className="font-bold">${getCartTotal().toFixed(2)}</span> à la réception de votre commande.
+                      Notre livreur acceptera les espèces et Mobile Money.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Résumé de la commande */}
+              <div className="border border-gray-200 rounded-lg p-6">
+                <h3 className="font-semibold text-gray-900 mb-4">Récapitulatif de la commande</h3>
+                <div className="space-y-3 mb-4 max-h-60 overflow-y-auto">
+                  {cart.map(item => (
+                    <div key={item.customId} className="flex justify-between text-sm">
+                      <div>
+                        <span className="font-medium text-gray-900">{item.product.nom}</span>
+                        <span className="text-gray-500 ml-2">x{item.quantity}</span>
+                        {item.size && <span className="text-gray-500 ml-2">- Taille {item.size}</span>}
+                        {item.color && <span className="text-gray-500 ml-2">- {item.color}</span>}
+                      </div>
+                      <span className="font-medium text-gray-900">
+                        ${(item.product.prix * item.quantity).toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
                 </div>
                 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    CVV *
-                  </label>
-                  <input
-                    type="text"
-                    name="cvv"
-                    value={formData.cvv}
-                    onChange={handleInputChange}
-                    required
-                    maxLength={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                  />
+                <div className="border-t border-gray-200 pt-4">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-gray-900">Total à payer</span>
+                    <span className="text-2xl font-bold text-gray-900">
+                      ${getCartTotal().toFixed(2)}
+                    </span>
+                  </div>
                 </div>
               </div>
+
+              {/* Informations de livraison */}
+              <div className="bg-gray-50 rounded-lg p-6">
+                <h3 className="font-semibold text-gray-900 mb-3">Adresse de livraison</h3>
+                <p className="text-gray-600">
+                  {formData.firstName} {formData.lastName}<br />
+                  {formData.address}<br />
+                  {formData.city}, {formData.country}<br />
+                </p>
+                <p className="text-gray-600 mt-2">
+                  <span className="font-medium">Téléphone:</span> {formData.phone}<br />
+                  <span className="font-medium">Email:</span> {formData.email}
+                </p>
+                {formData.deliveryInstructions && (
+                  <p className="text-gray-600 mt-2">
+                    <span className="font-medium">Instructions:</span> {formData.deliveryInstructions}
+                  </p>
+                )}
+              </div>
+
+              {/* Mentions légales */}
+              <p className="text-xs text-gray-500 text-center">
+                En confirmant votre commande, vous acceptez nos conditions générales de vente et notre politique de confidentialité.
+              </p>
             </div>
           )}
 
-          {/* Récapitulatif de la commande */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <h3 className="font-semibold text-gray-900 mb-4">Récapitulatif de la commande</h3>
-            <div className="space-y-2 mb-4">
-              {cart.map(item => (
-                <div key={item.customId} className="flex justify-between text-sm text-gray-600">
-                  <span>{item.product.nom} x{item.quantity} {item.size && `- ${item.size}`}</span>
-                  <span>${(item.product.prix * item.quantity).toFixed(2)}</span>
-                </div>
-              ))}
-            </div>
-            <div className="border-t pt-2 flex justify-between font-semibold text-gray-900">
-              <span>Total</span>
-              <span>${getCartTotal().toFixed(2)}</span>
-            </div>
-          </div>
-
           {/* Boutons */}
-          <div className="mt-6 flex justify-between">
+          <div className="mt-8 flex justify-between">
             {step === 2 && (
               <button
                 type="button"
@@ -380,10 +457,10 @@ export default function Checkout() {
             <button
               type="submit"
               disabled={loading}
-              className="ml-auto px-6 py-2 bg-gray-900 text-white rounded hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
+              className={`ml-auto px-8 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center font-medium`}
             >
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {step === 1 ? 'Continuer vers le paiement' : 'Confirmer la commande'}
+              {step === 1 ? 'Continuer' : 'Confirmer la commande'}
             </button>
           </div>
         </form>
