@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
 import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -10,11 +11,23 @@ import CartSidebar from './components/CartSidebar';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
+import WelcomeScreen from './components/WelcomeScreen';
 
 function App() {
+  const [showWelcome, setShowWelcome] = useState(
+  !sessionStorage.getItem('aveon_welcome_seen')
+);
+
+  const handleEnter = () => {
+  sessionStorage.setItem('aveon_welcome_seen', 'true');
+  setShowWelcome(false);
+  };
+
   return (
     <Router>
       <CartProvider>
+        {showWelcome && <WelcomeScreen onEnter={handleEnter} />}
+        
         <div className="min-h-screen">
           <Header />
           <CartSidebar />

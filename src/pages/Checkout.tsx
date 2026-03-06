@@ -138,7 +138,7 @@ Merci de traiter cette commande rapidement !`;
       redirectToWhatsApp(orderData, result._id);
       
       // 4. On attend un peu que WhatsApp s'ouvre
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise(resolve => setTimeout(resolve, 3000));
       
       // 5. MAINTENANT on envoie l'email (le client a déjà envoyé WhatsApp)
       try {
@@ -381,7 +381,7 @@ Merci de traiter cette commande rapidement !`;
                       Paiement à la livraison
                     </h3>
                     <p className="text-green-700">
-                      Vous paierez <span className="font-bold">${getCartTotal().toFixed(2)}</span> à la réception de votre commande.
+                      Vous paierez <span className="font-bold">{getCartTotal()} FCFA</span> à la réception de votre commande.
                       Notre livreur acceptera les espèces et Mobile Money.
                     </p>
                   </div>
@@ -401,7 +401,7 @@ Merci de traiter cette commande rapidement !`;
                         {item.color && <span className="text-gray-500 ml-2">- {item.color}</span>}
                       </div>
                       <span className="font-medium text-gray-900">
-                        ${(item.product.prix * item.quantity).toFixed(2)}
+                        {(item.product.prix * item.quantity)} FCFA
                       </span>
                     </div>
                   ))}
@@ -411,7 +411,7 @@ Merci de traiter cette commande rapidement !`;
                   <div className="flex justify-between items-center">
                     <span className="font-semibold text-gray-900">Total à payer</span>
                     <span className="text-2xl font-bold text-gray-900">
-                      ${getCartTotal().toFixed(2)}
+                      {getCartTotal()} FCFA
                     </span>
                   </div>
                 </div>

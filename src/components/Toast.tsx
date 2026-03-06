@@ -11,7 +11,7 @@ export default function Toast({ message, type, onClose }: ToastProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
-    }, 3000);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, [onClose]);
