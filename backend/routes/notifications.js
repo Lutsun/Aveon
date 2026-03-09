@@ -84,7 +84,7 @@ const formatCustomerEmail = (orderData, orderId) => {
             </table>
             
             <div class="total">
-              Total à payer : <strong>${orderData.total}€</strong>
+              Total à payer : <strong>${orderData.total} FCFA</strong>
             </div>
             
             <h3>Adresse de livraison :</h3>
@@ -166,7 +166,7 @@ ${items}
             </pre>
             
             <p style="font-size: 16px; font-weight: bold; text-align: right; margin-top: 15px;">
-              Total: ${orderData.total}€
+              Total: ${orderData.total} FCFA
             </p>
           </div>
           

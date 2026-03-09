@@ -1,4 +1,3 @@
-// src/components/WelcomeScreen.tsx
 import React, { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 
