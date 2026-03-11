@@ -19,7 +19,7 @@ const formatCustomerEmail = (orderData, orderId) => {
       <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
       <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.size || '-'}</td>
       <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.color || '-'}</td>
-      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${item.totalPrice}€</td>
+      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${item.totalPrice} FCFA</td>
     </tr>`
   ).join('');
 
@@ -112,7 +112,7 @@ const formatCustomerEmail = (orderData, orderId) => {
 // Email pour le marchand (détaillé, avec infos de contact)
 const formatMerchantEmail = (orderData, orderId) => {
   const items = orderData.items.map(item => 
-    `• ${item.productName} x${item.quantity}${item.size ? ` (Taille: ${item.size})` : ''}${item.color ? ` (Couleur: ${item.color})` : ''} - ${item.totalPrice}€`
+    `• ${item.productName} x${item.quantity}${item.size ? ` (Taille: ${item.size})` : ''}${item.color ? ` (Couleur: ${item.color})` : ''} - ${item.totalPrice} FCFA`
   ).join('\n');
 
   return `
@@ -202,7 +202,7 @@ ${items}
 router.post('/send-email', async (req, res) => {
   const { orderId, orderData, customerEmail } = req.body;
   
-  // Email du marchand (à configurer dans .env)
+  // Email du marchand 
   const merchantEmail = process.env.MERCHANT_EMAIL || 'contact@aveon.com';
 
   try {
@@ -238,14 +238,6 @@ router.post('/send-email', async (req, res) => {
       details: error.message 
     });
   }
-});
-
-// Route pour tester (optionnel)
-router.get('/test', async (req, res) => {
-  res.json({ 
-    message: 'Route notifications OK',
-    merchantEmail: process.env.MERCHANT_EMAIL || 'Non configuré (utilisera contact@aveon.com)'
-  });
 });
 
 module.exports = router;
