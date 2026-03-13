@@ -1,3 +1,4 @@
+// App.tsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import { CartProvider } from './context/CartContext';
@@ -12,15 +13,17 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import WelcomeScreen from './components/WelcomeScreen';
+import Collection from './pages/Collection';
+import About from './pages/About';
 
 function App() {
   const [showWelcome, setShowWelcome] = useState(
-  !sessionStorage.getItem('aveon_welcome_seen')
-);
+    !sessionStorage.getItem('aveon_welcome_seen')
+  );
 
   const handleEnter = () => {
-  sessionStorage.setItem('aveon_welcome_seen', 'true');
-  setShowWelcome(false);
+    sessionStorage.setItem('aveon_welcome_seen', 'true');
+    setShowWelcome(false);
   };
 
   return (
@@ -28,7 +31,7 @@ function App() {
       <CartProvider>
         {showWelcome && <WelcomeScreen onEnter={handleEnter} />}
         
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-gray-50">
           <Header />
           <CartSidebar />
           <main>
@@ -40,6 +43,8 @@ function App() {
                   <FeaturedSection />
                 </>
               } />
+              <Route path="/collection" element={<Collection />} />
+              <Route path="/about" element={<About />} />
               <Route path="/produit/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
