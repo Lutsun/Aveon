@@ -27,14 +27,14 @@ export default function Hero() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a
-              href="#collection"
+              href="/shop"
               className="group bg-white text-black px-8 py-4 rounded-none font-medium hover:bg-gray-100 transition-all duration-300 flex items-center space-x-2 w-full sm:w-auto justify-center"
             >
               <span>Explore Collection</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </a>
             <a
-              href="#new"
+              href="#/new-arrivals"
               className="group border-2 border-white text-white px-8 py-4 rounded-none font-medium hover:bg-white hover:text-black transition-all duration-300 w-full sm:w-auto text-center "
             >
               New Arrivals

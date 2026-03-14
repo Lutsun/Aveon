@@ -1,7 +1,6 @@
-// Header.tsx - Version finale
 import { ShoppingBag, Menu, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 export default function Header() {
@@ -10,7 +9,9 @@ export default function Header() {
   const { getCartCount, setIsCartOpen } = useCart();
   const cartCount = getCartCount();
   const location = useLocation();
+  const navigate = useNavigate();
   const isHomePage = location.pathname === '/';
+  const scrollAttempted = useRef(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,7 +21,6 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Empêcher le scroll quand le menu mobile est ouvert
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -35,18 +35,96 @@ export default function Header() {
   const isHeaderLight = !scrolled && isHomePage;
 
   const navItems = [
-    { name: 'New Arrivals', path: '/#new-arrivals' },
-    { name: 'Shop', path: '/collection' },
-    { name: 'About', path: '/about' },
+    { name: 'New Arrivals', path: '/#new-arrivals', isAnchor: true },
+    { name: 'Collection', path: '/collection', isAnchor: false },
+    { name: 'About', path: '/#about', isAnchor: true },
   ];
+
+  // Fonction de scroll avec vérification du DOM
+  const scrollToSection = useCallback((sectionId: string) => {
+    // Vérifier si la section existe
+    const checkSection = () => {
+      const section = document.getElementById(sectionId);
+      
+      if (section) {
+        const headerOffset = 80;
+        const elementPosition = section.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+        return true;
+      }
+      return false;
+    };
+
+    // Première tentative immédiate
+    if (checkSection()) return;
+
+    // Si pas trouvé, on attend que le DOM soit prêt
+    let attempts = 0;
+    const maxAttempts = 20;
+    
+    const interval = setInterval(() => {
+      attempts++;
+      
+      if (checkSection() || attempts >= maxAttempts) {
+        clearInterval(interval);
+      }
+    }, 100);
+  }, []);
+
+  const handleNavigation = (e: React.MouseEvent, item: typeof navItems[0]) => {
+    e.preventDefault();
+    
+    if (item.isAnchor) {
+      const sectionId = item.path.split('#')[1];
+      
+      if (isHomePage) {
+        scrollToSection(sectionId);
+      } else {
+        navigate('/', { state: { scrollTo: sectionId } });
+      }
+    } else {
+      navigate(item.path);
+    }
+    
+    setMobileMenuOpen(false);
+  };
+
+  // Effet pour gérer le scroll quand on arrive sur l'accueil
+  useEffect(() => {
+    if (isHomePage && location.state?.scrollTo && !scrollAttempted.current) {
+      const sectionId = location.state.scrollTo;
+      scrollAttempted.current = true;
+      
+      // Attendre que le composant soit monté
+      setTimeout(() => {
+        scrollToSection(sectionId);
+        
+        // Réinitialiser après un délai
+        setTimeout(() => {
+          scrollAttempted.current = false;
+        }, 1000);
+      }, 200);
+      
+      navigate('/', { replace: true, state: {} });
+    }
+  }, [isHomePage, location.state, navigate, scrollToSection]);
+
+  const handleLogoClick = () => {
+    if (isHomePage) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/');
+    }
+  };
 
   const isActive = (path: string) => {
     if (path.includes('#')) return false;
     return location.pathname === path;
-  };
-
-  const handleLogoClick = () => {
-    window.location.href = '/';
   };
 
   return (
@@ -59,7 +137,6 @@ export default function Header() {
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          {/* Logo avec rechargement */}
           <button 
             onClick={handleLogoClick}
             className="text-3xl font-black focus:outline-none relative z-50"
@@ -76,10 +153,11 @@ export default function Header() {
           {/* Navigation Desktop */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <Link
+              <a
                 key={item.path}
-                to={item.path}
-                className="relative px-2 py-1 group"
+                href={item.path}
+                onClick={(e) => handleNavigation(e, item)}
+                className="relative px-2 py-1 group cursor-pointer"
               >
                 <span className={`text-sm font-medium transition-colors duration-300 ${
                   isActive(item.path)
@@ -97,11 +175,11 @@ export default function Header() {
                 } ${
                   isHeaderLight && !scrolled ? 'bg-white' : 'bg-gray-900'
                 }`} />
-              </Link>
+              </a>
             ))}
           </div>
 
-          {/* Actions - Uniquement le panier */}
+          {/* Actions */}
           <div className="flex items-center space-x-5">
             <button 
               onClick={() => setIsCartOpen(true)}
@@ -136,30 +214,29 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Menu Mobile - Plein écran sans espace en haut */}
+        {/* Menu Mobile */}
         {mobileMenuOpen && (
           <div className="md:hidden fixed inset-0 top-0 left-0 w-full h-screen bg-black/95 backdrop-blur-lg z-40">
             <div className="flex flex-col items-center justify-center h-full space-y-8">
               {navItems.map((item) => (
-                <Link
+                <a
                   key={item.path}
-                  to={item.path}
+                  href={item.path}
+                  onClick={(e) => handleNavigation(e, item)}
                   className="text-3xl font-medium text-white hover:text-gray-300 transition-colors duration-300 transform hover:scale-110"
-                  onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.name}
-                </Link>
+                </a>
               ))}
               <div className="absolute bottom-12 left-0 right-0 text-center text-white/50 text-sm">
                 <p>Streetwear redefined</p>
-                <p className="mt-2">© 2024 AVEON</p>
+                <p className="mt-2">© 2026 AVEON</p>
               </div>
             </div>
           </div>
         )}
       </nav>
 
-      {/* Overlay pour le header transparent - seulement sur desktop */}
       {isHeaderLight && !scrolled && !mobileMenuOpen && (
         <div className="hidden md:block absolute inset-0 -z-10 bg-gradient-to-b from-black/30 to-transparent pointer-events-none" />
       )}

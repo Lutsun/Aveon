@@ -1,49 +1,71 @@
 // components/NewArrivalsSection.tsx
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import { Product } from './ProductGrid';
+import { useState, useEffect } from 'react';
 
 export default function NewArrivalsSection() {
-  const newProducts: Product[] = [
-    // Tes produits avec un flag "new"
-    { _id: '1', nom: 'Nouveau T-shirt', prix: 25000, image: '...', images: [], categorie: 'T-shirts', couleurs: ['Black'], tags: ['new'], dateCreation: new Date().toISOString(), stock: 5, description: '...', tailles: ['S', 'M', 'L'] },
-    { _id: '2', nom: 'Hoodie Edition', prix: 45000, image: '...', images: [], categorie: 'Hoodies', couleurs: ['Grey'], tags: ['new'], dateCreation: new Date().toISOString(), stock: 3, description: '...', tailles: ['M', 'L', 'XL'] },
-    { _id: '3', nom: 'Pants Cargo', prix: 35000, image: '...', images: [], categorie: 'Pants', couleurs: ['Khaki'], tags: ['new'], dateCreation: new Date().toISOString(), stock: 7, description: '...', tailles: ['S', 'M', 'L'] },
-    { _id: '4', nom: 'Jacket Limited', prix: 65000, image: '...', images: [], categorie: 'Jackets', couleurs: ['Black'], tags: ['new'], dateCreation: new Date().toISOString(), stock: 2, description: '...', tailles: ['M', 'L'] },
-  ];
+  const [newProducts, setNewProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNewArrivals = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/produits');
+        const data = await response.json();
+        // Filtrer les 4 produits les plus récents
+        const sorted = data.sort((a: Product, b: Product) => 
+          new Date(b.dateCreation).getTime() - new Date(a.dateCreation).getTime()
+        );
+        setNewProducts(sorted.slice(0, 4));
+      } catch (error) {
+        console.error('Erreur lors du chargement des produits:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNewArrivals();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="animate-pulse">Chargement...</div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section id="new-arrivals" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+    <section id="new-arrivals" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="w-5 h-5 text-gray-600" />
-              <span className="text-sm font-medium tracking-wider text-gray-600">NEW DROP</span>
-            </div>
-            <h2 className="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">
-              New Arrivals
-            </h2>
-            <p className="text-gray-600 text-lg max-w-2xl">
-              Les dernières pièces de la collection, disponibles en édition limitée.
-            </p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Sparkles className="w-5 h-5 text-gray-600" />
+            <span className="text-sm font-medium tracking-wider text-gray-600">NEW DROP 2026</span>
           </div>
-          
-          <Link 
-            to="/collection"
-            className="group flex items-center gap-2 mt-4 md:mt-0 text-gray-900 hover:text-gray-600 transition-colors"
-          >
-            <span className="font-medium">Voir toute la collection</span>
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">
+            New Arrivals
+          </h2>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            La nouvelle collection est arrivée. Des pièces uniques, en édition limitée.
+          </p>
+        </motion.div>
 
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
         >
@@ -60,16 +82,24 @@ export default function NewArrivalsSection() {
           ))}
         </motion.div>
 
-        {/* Badge édition limitée */}
-        <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-full text-sm">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          viewport={{ once: true }}
+          className="mt-12 text-center"
+        >
+          <Link 
+            to="/collection"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-full text-sm hover:bg-gray-800 transition-colors"
+          >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
             </span>
-            Éditions limitées - Plus que quelques pièces
-          </div>
-        </div>
+            Découvrir toute la collection
+          </Link>
+        </motion.div>
       </div>
     </section>
   );

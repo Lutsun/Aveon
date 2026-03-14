@@ -1,4 +1,3 @@
-// pages/Collection.tsx
 import { useState, useEffect } from 'react';
 import { Filter, ChevronDown } from 'lucide-react';
 import ProductGrid from '../components/ProductGrid';
