@@ -77,6 +77,7 @@ export default function NewArrivalsSection() {
               transition={{ delay: index * 0.1 }}
               viewport={{ once: true }}
             >
+              {/* ✅ ICI : PLUS DE Link, on utilise directement ProductCard */}
               <ProductCard product={product} />
             </motion.div>
           ))}

@@ -1,4 +1,3 @@
-// App.tsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import { CartProvider } from './context/CartContext';
@@ -13,6 +12,7 @@ import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import WelcomeScreen from './components/WelcomeScreen';
 import Collection from './pages/Collection';
+import ProductDetail from './pages/ProductDetails'; // 🔴 IMPORT À AJOUTER
 
 function App() {
   const [showWelcome, setShowWelcome] = useState(
@@ -41,7 +41,8 @@ function App() {
                   <FeaturedSection />
                 </>
               } />
-              <Route path="/collection" element={<Collection />} /> 
+              <Route path="/collection" element={<Collection />} />
+              <Route path="/produit/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-confirmation/:id" element={<OrderConfirmation />} />

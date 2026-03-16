@@ -42,7 +42,6 @@ export default function Header() {
 
   // Fonction de scroll avec vérification du DOM
   const scrollToSection = useCallback((sectionId: string) => {
-    // Vérifier si la section existe
     const checkSection = () => {
       const section = document.getElementById(sectionId);
       
@@ -60,10 +59,8 @@ export default function Header() {
       return false;
     };
 
-    // Première tentative immédiate
     if (checkSection()) return;
 
-    // Si pas trouvé, on attend que le DOM soit prêt
     let attempts = 0;
     const maxAttempts = 20;
     
@@ -94,17 +91,14 @@ export default function Header() {
     setMobileMenuOpen(false);
   };
 
-  // Effet pour gérer le scroll quand on arrive sur l'accueil
   useEffect(() => {
     if (isHomePage && location.state?.scrollTo && !scrollAttempted.current) {
       const sectionId = location.state.scrollTo;
       scrollAttempted.current = true;
       
-      // Attendre que le composant soit monté
       setTimeout(() => {
         scrollToSection(sectionId);
         
-        // Réinitialiser après un délai
         setTimeout(() => {
           scrollAttempted.current = false;
         }, 1000);
@@ -128,14 +122,14 @@ export default function Header() {
   };
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-lg py-0' 
-          : 'bg-transparent py-2'
-      }`}
-    >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   <header 
+  className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+    scrolled 
+      ? 'bg-white/95 backdrop-blur-md shadow-lg py-0' 
+      : 'bg-gradient-to-b from-black/60 via-black/30 to-transparent py-2'
+  }`}
+>
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-50">
         <div className="flex justify-between items-center h-20">
           <button 
             onClick={handleLogoClick}
@@ -151,7 +145,7 @@ export default function Header() {
           </button>
 
           {/* Navigation Desktop */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center gap-24 mr-auto ml-72">
             {navItems.map((item) => (
               <a
                 key={item.path}
@@ -214,32 +208,36 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Menu Mobile */}
-        {mobileMenuOpen && (
-          <div className="md:hidden fixed inset-0 top-0 left-0 w-full h-screen bg-black/95 backdrop-blur-lg z-40">
-            <div className="flex flex-col items-center justify-center h-full space-y-8">
-              {navItems.map((item) => (
-                <a
-                  key={item.path}
-                  href={item.path}
-                  onClick={(e) => handleNavigation(e, item)}
-                  className="text-3xl font-medium text-white hover:text-gray-300 transition-colors duration-300 transform hover:scale-110"
-                >
-                  {item.name}
-                </a>
-              ))}
-              <div className="absolute bottom-12 left-0 right-0 text-center text-white/50 text-sm">
-                <p>Streetwear redefined</p>
-                <p className="mt-2">© 2026 AVEON</p>
-              </div>
-            </div>
+        {/* Menu Mobile - CORRIGÉ */}
+          {mobileMenuOpen && (
+            <>
+              {/* Overlay noir opaque qui couvre tout */}
+              <div className="fixed inset-0 bg-black z-40 md:hidden" />
+              
+              {/* Contenu du menu centré */}
+              <div className="fixed inset-0 z-50 md:hidden flex items-center justify-center">
+                <div className="flex flex-col items-center space-y-6">
+          {navItems.map((item) => (
+            <a
+              key={item.path}
+              href={item.path}
+              onClick={(e) => handleNavigation(e, item)}
+              className="text-2xl font-medium text-white hover:text-gray-300 transition-colors duration-300 transform hover:scale-110"
+            >
+              {item.name}
+            </a>
+          ))}
+          <div className="absolute bottom-12 left-0 right-0 text-center text-white/50 text-sm">
+            <p>Streetwear redefined</p>
+            <p className="mt-2">© 2026 AVEON</p>
           </div>
-        )}
+        </div>
+        </div>
+      </>
+    )}
       </nav>
 
-      {isHeaderLight && !scrolled && !mobileMenuOpen && (
-        <div className="hidden md:block absolute inset-0 -z-10 bg-gradient-to-b from-black/30 to-transparent pointer-events-none" />
-      )}
+       
     </header>
   );
 }

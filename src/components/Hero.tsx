@@ -4,12 +4,13 @@ export default function Hero() {
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
       <div
-        className="absolute inset-0 bg-cover  bg-[position:center_24%] opacity-100"
-        style={{
-          backgroundImage: 'url(https://images.pexels.com/photos/1959036/pexels-photo-1959036.jpeg)',
-           backgroundSize: "100%",
-        }}
-      />
+  className="absolute inset-0 opacity-100"
+  style={{
+    backgroundImage: 'url(https://images.pexels.com/photos/1959036/pexels-photo-1959036.jpeg)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center 24%',
+  }}
+/>
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/80" />
 
@@ -19,7 +20,7 @@ export default function Hero() {
             AØN
           </h1>
           <p className="text-xl sm:text-2xl lg:text-3xl text-white/90 mb-4  font-light tracking-wide">
-            Be Relentless, Be AVEON
+            Vision on, pression none.
           </p>
           <p className="text-base sm:text-lg text-white/70 mb-12 max-w-2xl mx-auto">
             Streetwear redefined. Premium quality meets urban culture.
@@ -27,14 +28,14 @@ export default function Hero() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a
-              href="/shop"
+              href="/collection"
               className="group bg-white text-black px-8 py-4 rounded-none font-medium hover:bg-gray-100 transition-all duration-300 flex items-center space-x-2 w-full sm:w-auto justify-center"
             >
               <span>Explore Collection</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </a>
             <a
-              href="#/new-arrivals"
+              href="/#new-arrivals"
               className="group border-2 border-white text-white px-8 py-4 rounded-none font-medium hover:bg-white hover:text-black transition-all duration-300 w-full sm:w-auto text-center "
             >
               New Arrivals
