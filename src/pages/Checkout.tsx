@@ -138,7 +138,7 @@ Merci de traiter cette commande rapidement !`;
       redirectToWhatsApp(orderData, result._id);
       
       // 4. On attend un peu que WhatsApp s'ouvre
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, 4000));
       
       // 5. MAINTENANT on envoie l'email (le client a déjà envoyé WhatsApp)
       try {

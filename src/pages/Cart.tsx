@@ -42,7 +42,7 @@ export default function Cart() {
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Votre panier est vide</h2>
             <p className="text-gray-600 mb-8">Découvrez notre collection et trouvez votre style</p>
             <Link
-              to="/#collection"
+              to="/collection"
               className="inline-flex items-center px-6 py-3 bg-gray-900 text-white rounded hover:bg-gray-800 transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -156,7 +156,7 @@ export default function Cart() {
                         </button>
                       </div>
                       <p className="font-semibold text-gray-900">
-                        ${(item.product.prix * item.quantity).toFixed(2)}
+                        {(item.product.prix * item.quantity)} FCFA
                       </p>
                     </div>
                   </div>
@@ -187,7 +187,7 @@ export default function Cart() {
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Livraison</span>
-                  <span>Calculé à l'étape suivante</span>
+                  <span>Variable selon la zone</span>
                 </div>
                 {hasMissingOptions && (
                   <div className="flex justify-between text-yellow-600 text-sm">
@@ -225,7 +225,7 @@ export default function Cart() {
               )}
 
               <Link
-                to="/#collection"
+                to="/collection"
                 className="block text-center mt-4 text-sm text-gray-500 hover:text-gray-700 transition-colors"
               >
                 Continuer vos achats
