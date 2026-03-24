@@ -1,4 +1,3 @@
-// src/components/CartSidebar.tsx
 import { useCart } from '../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { X, Trash2, Plus, Minus, ShoppingBag, AlertTriangle } from 'lucide-react';
