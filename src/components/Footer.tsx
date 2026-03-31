@@ -1,57 +1,66 @@
-import { Instagram, Twitter, Facebook } from 'lucide-react';
+import { Instagram } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTiktok } from '@fortawesome/free-brands-svg-icons';
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          <div className="md:col-span-2">
-            <h3 className="text-2xl font-bold mb-4">AVEON</h3>
-            <p className="text-gray-400 mb-6 max-w-md">
-              Be Relentless, Be AVEON. Premium streetwear for those who dare to be different.
+    <footer className="bg-gradient-to-b from-gray-900 to-black text-white py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+          {/* Logo et description */}
+          <div className="text-center md:text-left">
+            <h3 className="text-3xl font-bold tracking-wide">AVEON</h3>
+            <p className="text-gray-400 text-base mt-3 max-w-sm mx-auto md:mx-0">
+              Vision on, pression none. Premium streetwear pour ceux qui osent être différents.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="hover:text-gray-400 transition-colors">
+          </div>
+
+          {/* Navigation */}
+          <div className="text-center">
+            <h4 className="text-gray-400 font-medium mb-4">Navigation</h4>
+            <ul className="space-y-3">
+              {['Nouveautés', 'T-Shirts', 'Collections', 'Contact'].map((item) => (
+                <li key={item}>
+                  <a
+                    href="#"
+                    className="text-gray-300 hover:text-white transition text-base"
+                  >
+                    {item}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Réseaux sociaux */}
+          <div className="text-center md:text-right">
+            <h4 className="text-gray-400 font-medium mb-4">Suivez-nous</h4>
+            <div className="flex justify-center md:justify-end gap-6">
+              <a
+                href="https://www.instagram.com/aveon"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-300 hover:text-white transition"
+              >
                 <Instagram className="w-6 h-6" />
               </a>
-              <a href="#" className="hover:text-gray-400 transition-colors">
-                <Twitter className="w-6 h-6" />
-              </a>
-              <a href="#" className="hover:text-gray-400 transition-colors">
-                <Facebook className="w-6 h-6" />
+              <a
+                href="https://www.tiktok.com/@aveon"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-300 hover:text-white transition"
+              >
+                <FontAwesomeIcon icon={faTiktok} className="w-6 h-6" />
               </a>
             </div>
           </div>
-
-          <div>
-            <h4 className="font-semibold mb-4">Shop</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">New Arrivals</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">T-Shirts</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Collections</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Sale</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-4">Support</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Shipping Info</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Returns</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Size Guide</a></li>
-            </ul>
-          </div>
         </div>
 
-        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <p className="text-gray-400 text-sm">
-            © 2026 AVEON. All rights reserved.
+        {/* Séparateur */}
+        <div className="border-t border-gray-800 pt-8 text-center">
+          <p className="text-gray-500 text-sm">
+            © {new Date().getFullYear()} AVEON. Tous droits réservés.
           </p>
-          <div className="flex space-x-6 text-sm text-gray-400">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-          </div>
         </div>
       </div>
     </footer>
