@@ -37,7 +37,7 @@ export default function Footer() {
             <h4 className="text-gray-400 font-medium mb-4">Suivez-nous</h4>
             <div className="flex justify-center md:justify-end gap-6">
               <a
-                href="https://www.instagram.com/aveon"
+                href="https://www.instagram.com/aveondakar/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-300 hover:text-white transition"
