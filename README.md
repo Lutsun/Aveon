@@ -1,7 +1,7 @@
-# AVEON 👕🔥  
+# AVEON ⚡  
 ### Vision on, pression none.
 
-**Made in Senegal 🇸🇳**
+**Made in Senegal :senegal:**
 
 ---
 
@@ -18,7 +18,7 @@ AVEON is built for individuals who keep their vision clear and their mindset str
 
 ---
 
-## 🇸🇳 Made in Senegal
+## Made in Senegal
 
 AVEON is proudly created and developed in Senegal.
 
