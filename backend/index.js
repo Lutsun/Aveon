@@ -30,7 +30,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Routes - chargement direct (pas dynamique)
-app.use('/api/produits', require('./routes/productRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/commandes', require('./routes/commandeRoutes'));
 app.use('/api/customers', require('./routes/customerRoutes'));
 app.use('/api/notifications', require('./routes/notifications'));
