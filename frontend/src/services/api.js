@@ -21,7 +21,7 @@ export const apiService = {
   // Récupérer tous les produits
   async getProducts(sort = 'nouveautes') {
     try {
-      const response = await fetch(`${API_BASE_URL}/produits?sort=${sort}`, {
+      const response = await fetch(`${API_BASE_URL}/products?sort=${sort}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export const apiService = {
   // Récupérer un produit par ID
   async getProductById(id) {
     try {
-      const response = await fetch(`${API_BASE_URL}/produits/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/products/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
