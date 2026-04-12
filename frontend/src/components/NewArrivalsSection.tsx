@@ -13,7 +13,7 @@ export default function NewArrivalsSection() {
   useEffect(() => {
     const fetchNewArrivals = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/produits');
+        const response = await fetch('/api/produits');
         const data = await response.json();
         // Filtrer les 4 produits les plus récents
         const sorted = data.sort((a: Product, b: Product) => 
@@ -67,7 +67,10 @@ export default function NewArrivalsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          // 👈 SEULE MODIFICATION : la grille s'adapte au nombre de produits
+          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 ${
+            newProducts.length === 3 ? 'lg:grid-cols-3 lg:ml-32 lg:w-screen ' : 'lg:grid-cols-4'
+          }`}
         >
           {newProducts.map((product, index) => (
             <motion.div
@@ -77,7 +80,6 @@ export default function NewArrivalsSection() {
               transition={{ delay: index * 0.1 }}
               viewport={{ once: true }}
             >
-              {/* ✅ ICI : PLUS DE Link, on utilise directement ProductCard */}
               <ProductCard product={product} />
             </motion.div>
           ))}

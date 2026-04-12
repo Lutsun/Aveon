@@ -10,6 +10,8 @@ export interface Product {
   nom: string;
   prix: number;
   image: string;
+  imageUrl?: string;       
+  imagePublicId?: string;
   images: string[];
   description: string;
   categorie: string;

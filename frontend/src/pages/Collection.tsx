@@ -44,9 +44,9 @@ export default function Collection() {
                        focus:outline-none focus:border-gray-400 transition-colors cursor-pointer
                        text-sm pr-10 hover:border-gray-400"
             >
-              <option value="nouveautes">✨ Nouveautés</option>
-              <option value="prix-croissant">💰 Prix: croissant</option>
-              <option value="prix-decroissant">💰 Prix: décroissant</option>
+              <option value="nouveautes"> Nouveautés</option>
+              <option value="prix-croissant"> Prix: croissant</option>
+              <option value="prix-decroissant"> Prix: décroissant</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

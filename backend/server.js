@@ -3,19 +3,42 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const cookieParser = require("cookie-parser"); // 👈 AJOUTER
+const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 
 const app = express();
 
-// Middleware CORS pour autoriser les requêtes du frontend
+// 🔧 CORS configuré pour fonctionner avec Vercel et local
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5000",
+  "https://aveon.vercel.app",
+  "https://aveon-git-main.vercel.app",
+  "https://aveon.vercel.app",
+  // Ajoute ton domaine Vercel réel après déploiement
+];
+
 app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true
+  origin: function(origin, callback) {
+    // Permettre les requêtes sans origin (ex: mobile apps, curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== "production") {
+      callback(null, true);
+    } else {
+      console.log("❌ CORS bloqué pour:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie", "Set-Cookie"],
+  exposedHeaders: ["Set-Cookie"]
 }));
 
+// Middleware
 app.use(express.json());
-app.use(cookieParser()); // 👈 AJOUTER
+app.use(cookieParser());
 
 // CONNEXION SYNCHRONE AVEC AWAIT
 async function startServer() {
@@ -33,12 +56,21 @@ async function startServer() {
     // Routes
     app.use("/api/produits", require("./routes/productRoutes"));
     app.use("/api/commandes", require("./routes/commandeRoutes"));
-    app.use("/api/customers", require("./routes/customerRoutes")); // 👈 AJOUTER
+    app.use("/api/customers", require("./routes/customerRoutes"));
     app.use("/api/notifications", require("./routes/notifications"));
     
     // Route de test
     app.get("/", (req, res) => {
       res.send(`Backend Aveon connecté à MongoDB ✅ (État: ${mongoose.connection.readyState})`);
+    });
+    
+    // Route health check pour Vercel
+    app.get("/api/health", (req, res) => {
+      res.json({ 
+        status: "OK", 
+        message: "AVEON API is running!",
+        mongodb: mongoose.connection.readyState === 1 ? "connected" : "disconnected"
+      });
     });
     
     // Error handling

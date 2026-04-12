@@ -22,7 +22,7 @@ export default function ProductDetail() {
   useEffect(() => {
     async function fetchProduct() {
       try {
-        const response = await fetch(`http://localhost:5000/api/produits/${id}`);
+        const response = await fetch(`/api/produits/${id}`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -30,7 +30,15 @@ export default function ProductDetail() {
         
         const data = await response.json();
         setProduct(data);
-        setSelectedImage(data.image || data.images?.[0] || '');
+        
+        // Configurer l'image sélectionnée (la première image du tableau ou l'image principale)
+        if (data.images && data.images.length > 0) {
+          setSelectedImage(data.images[0]);
+        } else if (data.image) {
+          setSelectedImage(data.image);
+        } else if (data.imageUrl) {
+          setSelectedImage(data.imageUrl);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load product');
         console.error('Erreur de chargement:', err);
@@ -48,9 +56,22 @@ export default function ProductDetail() {
     window.scrollTo(0, 0);
   }, [id]);
 
+  // Récupérer toutes les images du produit (devant + derrière + autres)
+  const getAllImages = () => {
+    if (product?.images && product.images.length > 0) {
+      return product.images;
+    }
+    if (product?.image) {
+      return [product.image];
+    }
+    if (product?.imageUrl) {
+      return [product.imageUrl];
+    }
+    return [];
+  };
+
   const handleAddToCart = () => {
     if (product) {
-      // Vérification des options requises
       const needsSize = product.tailles && product.tailles.length > 0;
       const needsColor = product.couleurs && product.couleurs.length > 0;
       
@@ -107,9 +128,10 @@ export default function ProductDetail() {
     );
   }
 
+  const allImages = getAllImages();
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
-      {/* Toast notification */}
       {toast && (
         <Toast 
           message={toast.message} 
@@ -118,7 +140,6 @@ export default function ProductDetail() {
         />
       )}
 
-      {/* Bouton de retour */}
       <div className="mb-6">
         <Link 
           to="/#collection"
@@ -130,45 +151,33 @@ export default function ProductDetail() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Images du produit */}
+        {/* Images du produit avec miniatures */}
         <div className="space-y-4">
-          <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
+          {/* Image principale */}
+          <div className="relative border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
             <img 
-              src={selectedImage || product.image || 'https://via.placeholder.com/600'} 
+              src={selectedImage || 'https://via.placeholder.com/600'} 
               alt={product.nom}
-              className="w-full h-96 object-contain p-4"
+              className="w-full h-auto min-h-[400px] object-contain p-4"
             />
           </div>
 
-          {product.images && product.images.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              <button
-                onClick={() => setSelectedImage(product.image || product.images[0])}
-                className={`flex-shrink-0 border-2 rounded overflow-hidden transition-all ${
-                  selectedImage === (product.image || product.images[0]) 
-                    ? 'border-gray-900 opacity-100' 
-                    : 'border-transparent opacity-60 hover:opacity-100'
-                }`}
-              >
-                <img 
-                  src={product.image || product.images[0]} 
-                  alt={product.nom}
-                  className="w-16 h-16 object-cover"
-                />
-              </button>
-              {product.images.slice(1).map((img: string, index: number) => (
+          {/* Miniatures - comme avant */}
+          {allImages.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto pb-2 justify-center">
+              {allImages.map((img: string, index: number) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(img)}
                   className={`flex-shrink-0 border-2 rounded overflow-hidden transition-all ${
                     selectedImage === img 
-                      ? 'border-gray-900 opacity-100' 
+                      ? 'border-gray-900 opacity-100 ring-2 ring-gray-900 ring-offset-2' 
                       : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
                   <img 
                     src={img} 
-                    alt={`${product.nom} ${index + 2}`}
+                    alt={`${product.nom} vue ${index + 1}`}
                     className="w-16 h-16 object-cover"
                   />
                 </button>
@@ -177,7 +186,7 @@ export default function ProductDetail() {
           )}
         </div>
 
-        {/* Détails du produit */}
+        {/* Détails du produit - inchangé */}
         <div className="space-y-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.nom}</h1>
@@ -306,7 +315,6 @@ export default function ProductDetail() {
             )}
           </button>
 
-          {/* Informations supplémentaires */}
           <div className="mt-8 space-y-4 text-sm text-gray-600 border-t border-gray-200 pt-6">
             <div className="flex items-center gap-2">
               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
