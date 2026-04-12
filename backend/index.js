@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-const productRoutes = require("../routes/productRoutes");
+const productRoutes = require("./routes/productRoutes");
 
 const app = express();
 
@@ -25,6 +25,10 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Routes API
 app.use("/api/products", productRoutes);
+
+app.get("/api/test", (req, res) => {
+  res.json({ message: "API OK" });
+});
 
 // Route test
 app.get("/api/health", (req, res) => {
