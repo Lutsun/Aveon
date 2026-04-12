@@ -5,6 +5,7 @@ import { Product } from '../components/ProductGrid';
 import { Loader2, ShoppingCart, ArrowLeft, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import Toast from '../components/Toast';
+import { API_URL } from '../config/api'; 
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -22,7 +23,7 @@ export default function ProductDetail() {
   useEffect(() => {
     async function fetchProduct() {
       try {
-        const response = await fetch(`/api/produits/${id}`);
+        const response = await fetch(`${API_URL}/produits/${id}`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

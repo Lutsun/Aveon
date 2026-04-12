@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import { Loader2 } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { API_URL } from '../config/api'; 
 
 // Interface adaptée à votre modèle Mongoose
 export interface Product {
@@ -44,7 +45,7 @@ export default function ProductGrid({
       try {
         setLoading(true);
         // Construction de l'URL avec les paramètres
-        let url = 'http://localhost:5000/api/produits';
+        let url = `${API_URL}/produits`;
         const params = new URLSearchParams();
         
         if (category) params.append('categorie', category);

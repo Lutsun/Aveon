@@ -1,4 +1,3 @@
-// backend/models/product.js
 const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema({
@@ -22,4 +21,4 @@ const productSchema = new mongoose.Schema({
   dateCreation: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model("product", productSchema);
