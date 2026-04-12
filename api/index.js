@@ -43,19 +43,19 @@ app.use('/api/produits', async (req, res, next) => {
 
 app.use('/api/commandes', async (req, res, next) => {
   await connectDB();
-  const commandeRoutes = require('../backend/routes/commandeRoutes');
+  const commandeRoutes = require('./routes/commandeRoutes');
   return commandeRoutes(req, res, next);
 });
 
 app.use('/api/customers', async (req, res, next) => {
   await connectDB();
-  const customerRoutes = require('../backend/routes/customerRoutes');
+  const customerRoutes = require('./routes/customerRoutes');
   return customerRoutes(req, res, next);
 });
 
 app.use('/api/notifications', async (req, res, next) => {
   await connectDB();
-  const notificationsRoutes = require('../backend/routes/notifications');
+  const notificationsRoutes = require('./routes/notifications');
   return notificationsRoutes(req, res, next);
 });
 
