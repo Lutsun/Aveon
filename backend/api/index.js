@@ -1,9 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const serverless = require("serverless-http");
 require("dotenv").config();
 
-const productRoutes = require("./routes/productRoutes");
+const productRoutes = require("../routes/productRoutes");
 
 const app = express();
 
@@ -18,29 +19,36 @@ app.use(cors({
 
 app.use(express.json());
 
-// Connexion MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("✅ MongoDB connecté"))
-  .catch((err) => console.error("❌ Erreur MongoDB:", err));
+// Connexion MongoDB (évite reconnexion multiple sur Vercel)
+let isConnected = false;
 
-// Routes API
+const connectDB = async () => {
+  if (isConnected) return;
+
+  try {
+    const db = await mongoose.connect(process.env.MONGODB_URI);
+    isConnected = db.connections[0].readyState;
+    console.log("✅ MongoDB connecté");
+  } catch (error) {
+    console.error("❌ MongoDB error:", error);
+  }
+};
+
+// Middleware connexion DB
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
+
+// Routes (⚠️ PAS de /api ici)
 app.use("/products", productRoutes);
 
-app.get("/test", (req, res) => {
-  res.json({ message: "API OK" });
-});
-
-// Route test
-app.get("/health", (req, res) => {
-  res.json({ status: "OK" });
-});
-
-// Gestion erreur 404
-app.use("*", (req, res) => {
+// 404
+app.use((req, res) => {
   res.status(404).json({
-    error: `Route ${req.method} ${req.originalUrl} non trouvée`
+    error: `Route ${req.method} ${req.url} non trouvée`
   });
 });
 
-// Export pour Vercel
-module.exports = app;
+// Export serverless (OBLIGATOIRE)
+module.exports = serverless(app);
