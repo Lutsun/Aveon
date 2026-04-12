@@ -1,7 +1,7 @@
 # AVEON ⚡  
 ### Vision on, pression none.
 
-**Made in Senegal **
+**Made in Senegal :senegal: **
 
 ---
 
