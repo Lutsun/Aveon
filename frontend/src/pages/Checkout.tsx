@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Loader2, Truck, MessageCircle, CheckCircle } from 'lucide-react';
@@ -18,11 +18,15 @@ interface CheckoutForm {
 // Mon numéro WhatsApp (format international sans le +)
 const MY_WHATSAPP_NUMBER = "221777203162";
 
+// Configuration pour les cookies
+const API_URL = 'http://localhost:5000/api';
+
 export default function Checkout() {
   const { cart, getCartTotal, clearCart } = useCart();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [isRemembered, setIsRemembered] = useState(false);
   const [formData, setFormData] = useState<CheckoutForm>({
     firstName: '',
     lastName: '',
@@ -34,6 +38,38 @@ export default function Checkout() {
     deliveryInstructions: ''
   });
 
+  // 👈 NOUVEAU : Charger les infos du client si cookie existe
+  useEffect(() => {
+    const loadCustomerData = async () => {
+      try {
+        const response = await fetch(`${API_URL}/customers/me`, {
+          credentials: 'include' // Important pour envoyer le cookie
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.customer) {
+            setFormData({
+              firstName: data.customer.firstName || '',
+              lastName: data.customer.lastName || '',
+              email: data.customer.email || '',
+              phone: data.customer.phone || '',
+              address: data.customer.address?.street || '',
+              city: data.customer.address?.city || 'Dakar',
+              country: data.customer.address?.country || 'Sénégal',
+              deliveryInstructions: data.customer.deliveryInstructions || ''
+            });
+            setIsRemembered(true);
+          }
+        }
+      } catch (error) {
+        console.error('Erreur chargement client:', error);
+      }
+    };
+    
+    loadCustomerData();
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -44,32 +80,32 @@ export default function Checkout() {
       let itemText = `• ${item.productName} x${item.quantity}`;
       if (item.size) itemText += ` (Taille: ${item.size})`;
       if (item.color) itemText += ` (Couleur: ${item.color})`;
-      itemText += ` - ${item.totalPrice}€`;
+      itemText += ` - ${item.totalPrice} FCFA`;
       return itemText;
     }).join('\n');
 
     const message = 
-`NOUVELLE COMMANDE AVEON
+`NOUVELLE COMMANDE AVEON 🛒
 
 Commande #${orderId.slice(-8)}
 
-Client: ${orderData.customerInfo.firstName} ${orderData.customerInfo.lastName}
-Téléphone: ${orderData.customerInfo.phone}
-Email: ${orderData.customerInfo.email}
+👤 Client: ${orderData.customerInfo.firstName} ${orderData.customerInfo.lastName}
+📞 Téléphone: ${orderData.customerInfo.phone}
+📧 Email: ${orderData.customerInfo.email}
 
-Adresse de livraison:
+📍 Adresse de livraison:
 ${orderData.customerInfo.address.street}
 ${orderData.customerInfo.address.city}, ${orderData.customerInfo.address.country}
 
-Instructions: ${orderData.customerInfo.deliveryInstructions || 'Aucune'}
+📝 Instructions: ${orderData.customerInfo.deliveryInstructions || 'Aucune'}
 
-Articles commandés:
+📦 Articles commandés:
 ${itemsList}
 
-Total de la commande: ${orderData.total}€
-Mode de paiement: Paiement à la livraison
+💰 Total: ${orderData.total} FCFA
+💳 Paiement: À la livraison
 
-Merci de traiter cette commande rapidement !`;
+Merci de traiter cette commande rapidement ! 🙏`;
 
     return encodeURIComponent(message);
   };
@@ -90,7 +126,7 @@ Merci de traiter cette commande rapidement !`;
     setLoading(true);
 
     try {
-      // 1. Préparer les données de la commande
+      // 1. Préparer les données de la commande (format attendu par backend modifié)
       const orderData = {
         items: cart.map(item => ({
           productId: item.product._id,
@@ -114,49 +150,48 @@ Merci de traiter cette commande rapidement !`;
           deliveryInstructions: formData.deliveryInstructions
         },
         paymentMethod: 'Paiement à la livraison',
-        total: getCartTotal(),
-        date: new Date().toISOString(),
-        status: 'en_attente'
+        total: getCartTotal()
       };
 
-      // 2. Envoyer la commande au backend pour sauvegarde
-      const response = await fetch('http://localhost:5000/api/commandes', {
+      // 2. Envoyer la commande au backend AVEC les cookies
+      const response = await fetch(`${API_URL}/commandes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // 👈 TRÈS IMPORTANT : envoie et reçoit les cookies
         body: JSON.stringify(orderData)
       });
 
       if (!response.ok) {
-        throw new Error('Erreur lors de la création de la commande');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erreur lors de la création de la commande');
       }
 
       const result = await response.json();
       
-      // 3. Rediriger vers WhatsApp AVANT d'envoyer l'email
-      redirectToWhatsApp(orderData, result._id);
+      // 3. Rediriger vers WhatsApp
+      redirectToWhatsApp(orderData, result.commandeId || result._id);
       
-      // 4. On attend un peu que WhatsApp s'ouvre
+      // 4. Attendre un peu que WhatsApp s'ouvre
       await new Promise(resolve => setTimeout(resolve, 4000));
       
-      // 5. MAINTENANT on envoie l'email (le client a déjà envoyé WhatsApp)
+      // 5. Envoyer l'email de confirmation
       try {
-        await fetch('http://localhost:5000/api/notifications/send-email', {
+        await fetch(`${API_URL}/notifications/send-email`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            orderId: result._id,
+            orderId: result.commandeId || result._id,
             orderData,
             customerEmail: formData.email
           })
         });
-        console.log('✅ Email envoyé après confirmation WhatsApp');
+        console.log('✅ Email envoyé');
       } catch (emailError) {
         console.error('Erreur envoi email:', emailError);
-        // On ne bloque pas la redirection même si l'email échoue
       }
       
       // 6. Vider le panier
@@ -164,7 +199,7 @@ Merci de traiter cette commande rapidement !`;
       
       // 7. Rediriger vers la confirmation
       setTimeout(() => {
-        navigate(`/order-confirmation/${result._id}`);
+        navigate(`/order-confirmation/${result.commandeId || result._id}`);
       }, 2000);
       
     } catch (error) {
@@ -192,6 +227,15 @@ Merci de traiter cette commande rapidement !`;
             Retour au panier
           </Link>
           <h1 className="text-3xl font-bold text-gray-900">Finaliser la commande</h1>
+          
+          {/* 👈 BANNER SI CLIENT RECONNU */}
+          {isRemembered && (
+            <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3">
+              <p className="text-green-700 text-sm">
+                ✅ Bon retour {formData.firstName} ! Vos informations ont été pré-remplies.
+              </p>
+            </div>
+          )}
           
           {/* Indicateur d'étape */}
           <div className="flex items-center justify-center mt-8">

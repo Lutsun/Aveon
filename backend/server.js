@@ -1,7 +1,9 @@
+// backend/server.js
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose"); 
+const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser"); // 👈 AJOUTER
 const connectDB = require("./config/db");
 
 const app = express();
@@ -13,26 +15,26 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(cookieParser()); // 👈 AJOUTER
 
 // CONNEXION SYNCHRONE AVEC AWAIT
 async function startServer() {
   try {
     console.log("🔗 Connexion à MongoDB...");
     
-    // Connectez-vous AVANT de définir les routes
     await connectDB();
     
-    // Vérifiez que la connexion est active
     if (mongoose.connection.readyState !== 1) {
       throw new Error("MongoDB non connecté");
     }
     
     console.log(`✅ MongoDB prêt (état: ${mongoose.connection.readyState})`);
     
-    // Routes (UNIQUEMENT après connexion MongoDB)
+    // Routes
     app.use("/api/produits", require("./routes/productRoutes"));
-    app.use("/api/commandes", require("./routes/commandeRoutes")); 
-    app.use("/api/notifications", require("./routes/notifications")); 
+    app.use("/api/commandes", require("./routes/commandeRoutes"));
+    app.use("/api/customers", require("./routes/customerRoutes")); // 👈 AJOUTER
+    app.use("/api/notifications", require("./routes/notifications"));
     
     // Route de test
     app.get("/", (req, res) => {
@@ -54,6 +56,7 @@ async function startServer() {
       console.log(`📍 URL: http://localhost:${PORT}`);
       console.log(`📍 API Produits: http://localhost:${PORT}/api/produits`);
       console.log(`📍 API Commandes: http://localhost:${PORT}/api/commandes`);
+      console.log(`📍 API Customers: http://localhost:${PORT}/api/customers`);
       console.log(`📍 API Notifications: http://localhost:${PORT}/api/notifications`);
       console.log(`📍 MongoDB: ${mongoose.connection.host}`);
       console.log(`=================================`);
@@ -65,7 +68,6 @@ async function startServer() {
   }
 }
 
-// Démarrez le serveur
 startServer();
 
 module.exports = app;

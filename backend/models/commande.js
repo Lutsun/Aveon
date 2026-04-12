@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
 const commandeSchema = new mongoose.Schema({
+  // 👈 AJOUTER cette ligne - lien vers Customer
+  customerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Customer',
+    required: true
+  },
   items: [{
     productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
     productName: String,
