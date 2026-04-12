@@ -24,14 +24,14 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch((err) => console.error("❌ Erreur MongoDB:", err));
 
 // Routes API
-app.use("/api/products", productRoutes);
+app.use("/products", productRoutes);
 
-app.get("/api/test", (req, res) => {
+app.get("/test", (req, res) => {
   res.json({ message: "API OK" });
 });
 
 // Route test
-app.get("/api/health", (req, res) => {
+app.get("/health", (req, res) => {
   res.json({ status: "OK" });
 });
 
