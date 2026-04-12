@@ -5,39 +5,52 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 
-// Middleware
+// Configuration CORS (reprise de ton server.js)
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5000",
+  "https://aveon.vercel.app",
+  "https://aveon-git-main.vercel.app",
+];
+
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://aveon.vercel.app'], // Ajoute ton domaine
-  credentials: true
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== "production") {
+      callback(null, true);
+    } else {
+      console.log("❌ CORS bloqué pour:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie", "Set-Cookie"],
+  exposedHeaders: ["Set-Cookie"]
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 
-// Connexion MongoDB avec cache (important pour serverless)
+// Connexion MongoDB avec cache
 let isConnected = false;
 
 const connectDB = async () => {
-  if (isConnected) {
-    console.log('📦 Using existing MongoDB connection');
-    return;
-  }
+  if (isConnected) return;
   
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.MONGODB_URI);
     isConnected = true;
-    console.log('✅ MongoDB connected successfully');
+    console.log('✅ MongoDB connected');
   } catch (error) {
-    console.error('❌ MongoDB connection error:', error);
+    console.error('❌ MongoDB error:', error);
   }
 };
 
-// Import des routes (après connexion DB)
+// Routes (importées depuis api/routes)
 app.use('/api/produits', async (req, res, next) => {
   await connectDB();
-  const productRoutes = require('../backend/routes/productRoutes');
+  const productRoutes = require('./routes/productRoutes');
   return productRoutes(req, res, next);
 });
 
@@ -59,10 +72,24 @@ app.use('/api/notifications', async (req, res, next) => {
   return notificationsRoutes(req, res, next);
 });
 
-// Route de test
+// Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'AVEON API is running!' });
+  res.json({ 
+    status: 'OK', 
+    message: 'AVEON API is running!',
+    mongodb: isConnected ? 'connected' : 'disconnected'
+  });
 });
 
-// Export pour Vercel
+// Middleware 404
+app.use((req, res) => {
+  res.status(404).json({ error: `Route ${req.method} ${req.url} not found` });
+});
+
+// Middleware erreur
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(500).json({ error: err.message });
+});
+
 module.exports = app;
