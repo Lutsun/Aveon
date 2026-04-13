@@ -45,7 +45,7 @@ export default function ProductGrid({
       try {
         setLoading(true);
         // Construction de l'URL avec les paramètres
-        let url = `${API_URL}/produits`;
+        let url = `${API_URL}/products`;
         const params = new URLSearchParams();
         
         if (category) params.append('categorie', category);

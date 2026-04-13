@@ -17,7 +17,7 @@ export default function NewArrivalsSection() {
       try {
         setLoading(true);
         // 👉 MODIFIEZ CETTE LIGNE - Utilisez API_URL au lieu de '/api'
-        const response = await fetch(`${API_URL}/produits`);
+        const response = await fetch(`${API_URL}/products`);
         
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);

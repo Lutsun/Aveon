@@ -23,7 +23,7 @@ export default function ProductDetail() {
   useEffect(() => {
     async function fetchProduct() {
       try {
-        const response = await fetch(`${API_URL}/produits/${id}`);
+        const response = await fetch(`${API_URL}/products/${id}`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

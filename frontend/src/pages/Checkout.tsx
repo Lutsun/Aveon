@@ -19,7 +19,7 @@ interface CheckoutForm {
 const MY_WHATSAPP_NUMBER = "221777203162";
 
 // Configuration pour les cookies
-const API_URL = '/api/produits';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Checkout() {
   const { cart, getCartTotal, clearCart } = useCart();
