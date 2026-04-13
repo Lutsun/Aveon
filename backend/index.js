@@ -7,12 +7,20 @@ const productRoutes = require("./routes/productRoutes");
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://aveon-frontend.vercel.app",
+  "https://aveondakar.shop"
+];
+
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://aveon-frontend.vercel.app",
-    "https://aveondakar.shop"
-  ],
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS bloqué pour : " + origin));
+    }
+  },
   credentials: true
 }));
 
