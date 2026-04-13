@@ -3,6 +3,7 @@
     {
       "source": "/api/(.*)",
       "destination": "https://aveon-backend.vercel.app/api/$1"
-    }
+    },
+     { "source": "/(.*)", "destination": "/" }
   ]
 }
