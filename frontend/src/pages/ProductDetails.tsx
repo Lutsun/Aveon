@@ -319,11 +319,11 @@ export default function ProductDetail() {
           <div className="mt-8 space-y-4 text-sm text-gray-600 border-t border-gray-200 pt-6">
             <div className="flex items-center gap-2">
               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-              <span>Livraison gratuite pour les commandes de plus de 20 000 Fcfa</span>
+              <span>Livraison gratuite pour les commandes de plus de 20 000 Fcfa.</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-              <span>Le client doit valider sa commande par Mobile Money avant la livraison ; le paiement sur place n’est accepté qu’en espèces.</span>
+              <span>Paiement à la livraison en espèce ou par Mobile Money.</span>
             </div>
           </div>
         </div>

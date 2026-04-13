@@ -19,13 +19,17 @@ export default function Footer() {
           <div className="text-center">
             <h4 className="text-gray-400 font-medium mb-4">Navigation</h4>
             <ul className="space-y-3">
-              {['Nouveautés', 'T-Shirts', 'Collections', 'Contact'].map((item) => (
-                <li key={item}>
+              {[
+                { name: 'New Arrivals', href: '/#new-arrivals' },
+                { name: 'Collection', href: '/collection' },
+                { name: 'About', href: '/about' },
+              ].map((item) => (
+                <li key={item.name}>
                   <a
-                    href="#"
+                    href={item.href}
                     className="text-gray-300 hover:text-white transition text-base"
                   >
-                    {item}
+                    {item.name}
                   </a>
                 </li>
               ))}
@@ -45,7 +49,7 @@ export default function Footer() {
                 <Instagram className="w-6 h-6" />
               </a>
               <a
-                href="https://www.tiktok.com/@aveon"
+                href="https://www.tiktok.com/@aveondakar"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-300 hover:text-white transition"
