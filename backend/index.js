@@ -37,9 +37,9 @@ app.use(express.json());
 app.use(cookieParser()); // 🔥 IMPORTANT
 
 // MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB connecté"))
-  .catch(err => console.error(err));
+mongoose.connect(process.env.MONGODB_URI, {
+  serverSelectionTimeoutMS: 5000
+});
 
 // ROUTES (toutes ici)
 app.use("/api/products", productRoutes);
