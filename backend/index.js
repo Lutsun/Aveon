@@ -1,12 +1,17 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const productRoutes = require("./routes/productRoutes");
+const commandeRoutes = require("./routes/commandeRoutes");
+const customerRoutes = require("./routes/customerRoutes");
+const notificationRoutes = require("./routes/notifications");
 
 const app = express();
 
+// CORS
 const allowedOrigins = [
   "http://localhost:5173",
   "https://aveon-frontend.vercel.app",
@@ -22,38 +27,34 @@ app.use(cors({
       callback(new Error("CORS bloqué"));
     }
   },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  credentials: true
 }));
-
-app.use(express.json());
 
 app.options("*", cors());
 
-// Permet d'envoyer les cookies avec les requêtes CORS
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
+// Middlewares
+app.use(express.json());
+app.use(cookieParser()); // 🔥 IMPORTANT
 
 // MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connecté"))
   .catch(err => console.error(err));
 
-// Routes (AVEC /api cette fois)
+// ROUTES (toutes ici)
 app.use("/api/products", productRoutes);
-app.use("/api/commandes", require("./routes/commandeRoutes"));
-app.use("/api/customers", require("./routes/customerRoutes"));
-app.use("/api/notifications", require("./routes/notificationRoutes"));
+app.use("/api/commandes", commandeRoutes);
+app.use("/api/customers", customerRoutes);
+app.use("/api/notifications", notificationRoutes);
 
-app.use((req, res) => {
-  res.status(404).json({ message: "Route non trouvée" });
-});
-
+// Route test
 app.get("/", (req, res) => {
   res.send("API running");
+});
+
+// 404 propre (évite JSON.parse error)
+app.use((req, res) => {
+  res.status(404).json({ message: "Route non trouvée" });
 });
 
 module.exports = app;
