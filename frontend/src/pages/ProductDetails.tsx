@@ -323,7 +323,7 @@ export default function ProductDetail() {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-              <span>Paiement à la livraison en espèce ou par Mobile Money</span>
+              <span>Le client doit valider sa commande par Mobile Money avant la livraison ; le paiement sur place n’est accepté qu’en espèces.</span>
             </div>
           </div>
         </div>

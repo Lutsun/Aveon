@@ -3,7 +3,7 @@ const getApiUrl = () => {
   // En production (sur Vercel)
   if (import.meta.env.PROD) {
     // Remplacez par l'URL DE VOTRE BACKEND sur Vercel
-    return 'https://aveon-backend.vercel.app/api';
+    return '/api';
   }
   
   // En développement local

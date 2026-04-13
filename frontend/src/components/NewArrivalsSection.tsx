@@ -5,12 +5,12 @@ import { Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import { Product } from './ProductGrid';
 import { useState, useEffect } from 'react';
-import { API_URL } from '../config/api'; // 👈 AJOUTEZ CETTE LIGNE
+import { API_URL } from '../config/api'; 
 
 export default function NewArrivalsSection() {
   const [newProducts, setNewProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // 👈 AJOUTEZ POUR GÉRER LES ERREURS
+  const [error, setError] = useState<string | null>(null); 
 
   useEffect(() => {
     const fetchNewArrivals = async () => {
