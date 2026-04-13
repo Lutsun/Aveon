@@ -29,7 +29,10 @@ export default function OrderConfirmation() {
   useEffect(() => {
     async function fetchOrder() {
       try {
-        const response = await fetch(`http://localhost:5000/api/commandes/${id}`);
+       const API_URL = import.meta.env.VITE_API_URL;
+       const response = await fetch(`${API_URL}/commandes/${id}`, {
+      credentials: "include"
+      });
         if (!response.ok) throw new Error('Commande non trouvée');
         const data = await response.json();
         setOrder(data);
