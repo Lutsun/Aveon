@@ -18,13 +18,24 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("CORS bloqué pour : " + origin));
+      console.log("❌ CORS bloqué pour :", origin);
+      callback(new Error("CORS bloqué"));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(express.json());
+
+app.options("*", cors());
+
+// Permet d'envoyer les cookies avec les requêtes CORS
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 // MongoDB
 mongoose.connect(process.env.MONGODB_URI)
