@@ -44,6 +44,13 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Routes (AVEC /api cette fois)
 app.use("/api/products", productRoutes);
+app.use("/api/commandes", require("./routes/commandeRoutes"));
+app.use("/api/customers", require("./routes/customerRoutes"));
+app.use("/api/notifications", require("./routes/notificationRoutes"));
+
+app.use((req, res) => {
+  res.status(404).json({ message: "Route non trouvée" });
+});
 
 app.get("/", (req, res) => {
   res.send("API running");
