@@ -171,7 +171,8 @@ Merci de traiter cette commande rapidement ! 🙏`;
       const result = await response.json();
       
       // 3. Rediriger vers WhatsApp
-      redirectToWhatsApp(orderData, result.commandeId || result._id);
+      const orderId = result.commandeId;
+      redirectToWhatsApp(orderData, orderId);
       
       // 4. Attendre un peu que WhatsApp s'ouvre
       await new Promise(resolve => setTimeout(resolve, 4000));
@@ -199,7 +200,7 @@ Merci de traiter cette commande rapidement ! 🙏`;
       
       // 7. Rediriger vers la confirmation
       setTimeout(() => {
-        navigate(`/order-confirmation/${result.commandeId || result._id}`);
+        navigate(`/order-confirmation/${orderId}`);
       }, 2000);
       
     } catch (error) {
