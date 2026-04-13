@@ -30,12 +30,11 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link 
             to="/collection"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-full text-sm hover:bg-gray-800 transition-colors"
+            className="group bg-white text-black px-8 py-4 rounded-none font-medium hover:bg-gray-100 transition-all duration-300 flex items-center space-x-2 w-full sm:w-auto justify-center"
           >
-            
-              <span>Explore Collection</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
+            <span>Explore Collection</span>
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </Link>
             <Link to="/#new-arrivals"
               className="group border-2 border-white text-white px-8 py-4 rounded-none font-medium hover:bg-white hover:text-black transition-all duration-300 w-full sm:w-auto text-center "
             >
