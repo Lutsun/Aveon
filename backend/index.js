@@ -12,26 +12,24 @@ const notificationRoutes = require("./routes/notifications");
 const app = express();
 
 // CORS
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://aveon-frontend.vercel.app",
-  "https://aveondakar.shop"
-];
-
-app.use(cors({
+const corsOptions = {
   origin: [
     "http://localhost:5173",
     "https://aveon-frontend.vercel.app",
     "https://aveondakar.shop"
   ],
-  credentials: true
-}));
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
 
-app.options("*", cors());
+app.use(cors(corsOptions)); // CORS pour toutes les routes
+app.options("*", cors(corsOptions)); // Pré-vol pour toutes les routes
+
 
 // Middlewares
 app.use(express.json());
-app.use(cookieParser()); // 🔥 IMPORTANT
+app.use(cookieParser()); 
 
 // MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
