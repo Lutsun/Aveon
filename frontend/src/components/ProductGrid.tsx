@@ -1,11 +1,10 @@
-// components/ProductGrid.tsx
 import { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import { Loader2 } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { API_URL } from '../config/api'; 
 
-// Interface adaptée à votre modèle Mongoose
+// Interface adaptée à mon modèle Mongoose
 export interface Product {
   _id: string;
   nom: string;

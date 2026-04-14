@@ -32,6 +32,11 @@ export default function Header() {
     };
   }, [mobileMenuOpen]);
 
+  useEffect(() => {
+  setMobileMenuOpen(false);
+  document.body.style.overflow = 'unset';
+}, [location.pathname]);
+
   const isHeaderLight = !scrolled && isHomePage;
 
   const navItems = [
@@ -122,18 +127,21 @@ export default function Header() {
   };
 
   return (
-   <header 
-  className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-    scrolled 
-      ? 'bg-white/95 backdrop-blur-md shadow-lg py-0' 
-      : 'bg-gradient-to-b from-black/60 via-black/30 to-transparent py-2'
+  <>
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isHomePage && !scrolled
+      ? 'bg-gradient-to-b from-black/60 via-black/30 to-transparent py-2'
+      : 'bg-white/95 backdrop-blur-md shadow-lg py-0'
   }`}
->
+    >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-50">
         <div className="flex justify-between items-center h-20">
+
+          {/* LOGO */}
           <button 
             onClick={handleLogoClick}
-            className="text-3xl font-black focus:outline-none relative z-50"
+            className="text-3xl font-black focus:outline-none"
           >
             <span className={`transition-colors duration-300 ${
               isHeaderLight && !scrolled 
@@ -144,7 +152,7 @@ export default function Header() {
             </span>
           </button>
 
-          {/* Navigation Desktop */}
+          {/* NAV DESKTOP */}
           <div className="hidden md:flex items-center gap-24 mr-auto ml-72">
             {navItems.map((item) => (
               <a
@@ -173,8 +181,9 @@ export default function Header() {
             ))}
           </div>
 
-          {/* Actions */}
+          {/* ACTIONS */}
           <div className="flex items-center space-x-5">
+
             <button 
               onClick={() => setIsCartOpen(true)}
               className="hover:scale-110 transition-transform duration-200 relative group"
@@ -196,48 +205,73 @@ export default function Header() {
             </button>
 
             <button
-              className={`md:hidden hover:scale-110 transition-transform duration-200 relative z-50 ${
+              className={`md:hidden hover:scale-110 transition-transform duration-200 ${
                 isHeaderLight && !scrolled 
                   ? 'text-white' 
                   : 'text-gray-700'
               }`}
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => setMobileMenuOpen(prev => !prev)}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
+
           </div>
         </div>
+      </nav>
+    </header>
 
-        {/* Menu Mobile - CORRIGÉ */}
-          {mobileMenuOpen && (
-            <>
-              {/* Overlay noir opaque qui couvre tout */}
-              <div className="fixed inset-0 bg-black z-40 md:hidden" />
-              
-              {/* Contenu du menu centré */}
-              <div className="fixed inset-0 z-50 md:hidden flex items-center justify-center">
-                <div className="flex flex-col items-center space-y-6">
+    {/* MENU MOBILE FULL SCREEN  */}
+    <div
+      className={`md:hidden fixed inset-0 z-[9999] transition-all duration-500 ${
+        mobileMenuOpen
+          ? 'opacity-100 pointer-events-auto'
+          : 'opacity-0 pointer-events-none'
+      }`}
+    >
+      {/* BACKGROUND FULL BLACK */}
+      <div className="absolute inset-0 bg-black" />
+
+      {/* CONTENT */}
+      <div className="relative flex flex-col justify-between h-full px-6 py-8 text-white">
+
+        {/* TOP */}
+        <div className="flex items-center justify-between">
+          <span className="text-xl font-bold tracking-wide">AVEON</span>
+
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="p-2 rounded-full hover:bg-white/10 transition"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* NAV */}
+        <div className="flex flex-col items-center gap-8 text-3xl font-semibold">
           {navItems.map((item) => (
             <a
               key={item.path}
               href={item.path}
               onClick={(e) => handleNavigation(e, item)}
-              className="text-2xl font-medium text-white hover:text-gray-300 transition-colors duration-300 transform hover:scale-110"
+              className="relative group"
             >
-              {item.name}
+              <span className="transition-opacity group-hover:opacity-60">
+                {item.name}
+              </span>
+
+              <span className="absolute left-0 -bottom-2 h-[2px] w-0 bg-white transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
-          <div className="absolute bottom-12 left-0 right-0 text-center text-white/50 text-sm">
-            <p>Streetwear redefined</p>
-            <p className="mt-2">© 2026 AVEON</p>
-          </div>
         </div>
-        </div>
-      </>
-    )}
-      </nav>
 
-       
-    </header>
-  );
+        {/* FOOTER */}
+        <div className="text-center text-sm text-white/40">
+          <p>Streetwear redefined</p>
+          <p className="mt-1">© 2026 AVEON</p>
+        </div>
+
+      </div>
+    </div>
+  </>
+);
 }

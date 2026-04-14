@@ -36,6 +36,12 @@ export default function Hero() {
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
             <Link to="/#new-arrivals"
+              onClick={(e) => {
+                if (window.location.pathname === '/') {
+                  e.preventDefault();
+                  document.getElementById('new-arrivals')?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
               className="group border-2 border-white text-white px-8 py-4 rounded-none font-medium hover:bg-white hover:text-black transition-all duration-300 w-full sm:w-auto text-center "
             >
               New Arrivals

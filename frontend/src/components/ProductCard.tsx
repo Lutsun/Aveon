@@ -134,7 +134,7 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
           <button className={`absolute bottom-4 left-4 right-4 bg-black text-white py-3 rounded-full font-medium transition-all duration-300 transform ${
             isHovered ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
           }`}>
-            Ajouter au panier
+            Voir le produit
           </button>
         </div>
 
