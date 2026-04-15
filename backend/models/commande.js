@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const commandeSchema = new mongoose.Schema({
-  // 👈 AJOUTER cette ligne - lien vers Customer
+  // AJOUTER cette ligne - lien vers Customer
   customerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Customer',
-    required: true
+    required: false // Permet de créer une commande même sans customerId (ex: client non enregistré)
   },
   items: [{
     productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },

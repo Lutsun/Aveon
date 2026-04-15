@@ -8,15 +8,22 @@ const { generateRememberToken, getCustomerFromCookie } = require('../middleware/
 // Créer une nouvelle commande (AVEC gestion customer)
 router.post("/", async (req, res) => {
   try {
-    const { customerInfo } = req.body;
+    const data = req.body;
 
-    // 🔥 Création de la commande
-    const commande = await Commande.create(req.body);
+    console.log("📦 Données reçues:", data);
 
-    // 🔥 COOKIE (client reconnu)
+    if (!data) {
+      return res.status(400).json({
+        success: false,
+        message: "Données manquantes"
+      });
+    }
+
+    const commande = await Commande.create(data);
+
     const token = JSON.stringify({
-      email: customerInfo.email,
-      name: customerInfo.name
+      email: data.email || "client@unknown.com",
+      name: data.name || "Client"
     });
 
     res.cookie("remember_me", token, {
@@ -26,18 +33,18 @@ router.post("/", async (req, res) => {
       maxAge: 1000 * 60 * 60 * 24 * 30
     });
 
-    // 🔥 RÉPONSE PROPRE (TRÈS IMPORTANT)
     res.status(201).json({
       success: true,
-      commandeId: commande._id,   
+      commandeId: commande._id,
       commande
     });
 
   } catch (err) {
     console.error("❌ Erreur création commande:", err);
+
     res.status(500).json({
       success: false,
-      message: "Erreur création commande"
+      message: err.message
     });
   }
 });

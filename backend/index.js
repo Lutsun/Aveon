@@ -14,73 +14,36 @@ const app = express();
 
 
 // ======================
-// 🔥 CORS CONFIG (FINAL)
+// ✅ CORS SIMPLE (AUCUNE ERREUR)
 // ======================
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://aveon-frontend.vercel.app",
-  "https://aveondakar.shop",
-  "https://www.aveondakar.shop"
-];
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://aveon-frontend.vercel.app",
+    "https://aveondakar.shop",
+    "https://www.aveondakar.shop"
+  ],
+  credentials: true
+}));
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    // autorise Postman / requêtes serveur sans origin
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log("❌ CORS bloqué pour :", origin);
-      callback(null, false); // ⚠️ on bloque sans crash
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-};
-
-// 🔥 IMPORTANT : appliquer partout
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
-
-// 🔥 SÉCURITÉ : forcer headers sur toutes réponses
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-  }
-
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-
-  next();
-});
+app.options("*", cors());
 
 
-// ======================
-// 🔧 MIDDLEWARES
 // ======================
 app.use(express.json());
 app.use(cookieParser());
 
 
 // ======================
-// 🍃 MONGODB
+// MONGODB
 // ======================
-mongoose.set("strictQuery", false);
-
-mongoose.connect(process.env.MONGODB_URI, {
-  serverSelectionTimeoutMS: 5000
-})
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ MongoDB connecté"))
   .catch(err => console.error("❌ MongoDB erreur:", err));
 
 
 // ======================
-// 📦 ROUTES API
+// ROUTES
 // ======================
 app.use("/api/products", productRoutes);
 app.use("/api/commandes", commandeRoutes);
@@ -89,23 +52,15 @@ app.use("/api/notifications", notificationRoutes);
 
 
 // ======================
-// 🏠 ROOT
-// ======================
 app.get("/", (req, res) => {
   res.send("API running");
 });
 
 
 // ======================
-// ❌ 404 HANDLER (IMPORTANT)
-// ======================
 app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "Route non trouvée"
-  });
+  res.status(404).json({ message: "Route non trouvée" });
 });
 
 
-// ======================
 module.exports = app;

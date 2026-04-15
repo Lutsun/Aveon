@@ -154,18 +154,19 @@ Merci de traiter cette commande rapidement ! 🙏`;
       };
 
       // 2. Envoyer la commande au backend AVEC les cookies
-      const response = await fetch(`${API_URL}/commandes`, {
-        method: 'POST',
+        const response = await fetch(`${API_URL}/commandes`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include', // 👈 TRÈS IMPORTANT : envoie et reçoit les cookies
-        body: JSON.stringify(orderData)
+        body: JSON.stringify(orderData),
+        credentials: "include"
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erreur lors de la création de la commande');
+        const text = await response.text();
+        console.error("❌ Erreur API:", text);
+        throw new Error("Erreur création commande");
       }
 
       const result = await response.json();
@@ -185,7 +186,7 @@ Merci de traiter cette commande rapidement ! 🙏`;
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            orderId: result.commandeId || result._id,
+            orderId: result.commandeId ,
             orderData,
             customerEmail: formData.email
           })
