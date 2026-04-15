@@ -1,8 +1,10 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
+
+// MongoDB (connexion optimisée)
+const connectDB = require("./lib/mongodb");
 
 // Routes
 const productRoutes = require("./routes/productRoutes");
@@ -14,7 +16,7 @@ const app = express();
 
 
 // ======================
-// ✅ CORS SIMPLE (AUCUNE ERREUR)
+//  CORS SIMPLE ET STABLE
 // ======================
 app.use(cors({
   origin: [
@@ -30,16 +32,27 @@ app.options("*", cors());
 
 
 // ======================
+// MIDDLEWARES
+// ======================
 app.use(express.json());
 app.use(cookieParser());
 
 
 // ======================
-// MONGODB
+// CONNEXION MONGODB OPTIMISÉE
 // ======================
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("✅ MongoDB connecté"))
-  .catch(err => console.error("❌ MongoDB erreur:", err));
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error("❌ Erreur connexion MongoDB:", err);
+    res.status(500).json({
+      success: false,
+      message: "Erreur connexion base de données"
+    });
+  }
+});
 
 
 // ======================
@@ -58,8 +71,13 @@ app.get("/", (req, res) => {
 
 
 // ======================
+// 404 PROPRE
+// ======================
 app.use((req, res) => {
-  res.status(404).json({ message: "Route non trouvée" });
+  res.status(404).json({
+    success: false,
+    message: "Route non trouvée"
+  });
 });
 
 
