@@ -7,23 +7,23 @@ export default function Hero() {
       <div
   className="absolute inset-0 opacity-100"
   style={{
-    backgroundImage: 'url(https://images.pexels.com/photos/1959036/pexels-photo-1959036.jpeg)',
+    backgroundImage: 'url(/hero.JPG)',
     backgroundSize: 'cover',
-    backgroundPosition: 'center 24%',
+    backgroundPosition: 'center 55%',
   }}
 />
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/80" />
 
-      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto mt-6 translate-y-10 sm:translate-y-0">
         <div className="animate-fade-in-up delay-800 duration-3000">
-          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold text-white mb-6 py-4 tracking-tight mt-0 lg:mt-20">
+          <h1 className="text-4xl sm:text-7xl lg:text-8xl font-bold text-white mb-6 -mt-2 py-4 tracking-tight mt-0 lg:mt-20">
             AØN
           </h1>
-          <p className="text-xl sm:text-2xl lg:text-3xl text-white/90 mb-4  font-light tracking-wide">
+          <p className="text-xl sm:text-2xl lg:text-3xl text-white font-medium mb-4  font-light tracking-wide">
             Vision on, pression none.
           </p>
-          <p className="text-base sm:text-lg text-white/70 mb-12 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-white mb-12  max-w-2xl mx-auto">
             Streetwear redefined. Premium quality meets urban culture.
           </p>
 
