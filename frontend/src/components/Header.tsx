@@ -107,7 +107,7 @@ export default function Header() {
         setTimeout(() => {
           scrollAttempted.current = false;
         }, 1000);
-      }, 200);
+      }, 500);
       
       navigate('/', { replace: true, state: {} });
     }
