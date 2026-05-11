@@ -12,7 +12,7 @@ import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import WelcomeScreen from './components/WelcomeScreen';
 import Collection from './pages/Collection';
-import ProductDetail from './pages/ProductDetails'; // 🔴 IMPORT À AJOUTER
+import ProductDetail from './pages/ProductDetails';
 
 function App() {
   const [showWelcome, setShowWelcome] = useState(

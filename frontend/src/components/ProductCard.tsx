@@ -126,7 +126,7 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
             </div>
           ) : (
             <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-md">
-              Rupture
+              Sold Out
             </div>
           )}
 
