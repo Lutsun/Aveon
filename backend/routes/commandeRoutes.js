@@ -1,4 +1,3 @@
-// backend/routes/commandeRoutes.js
 const express = require('express');
 const router = express.Router();
 const Commande = require('../models/commande');

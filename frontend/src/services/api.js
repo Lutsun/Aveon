@@ -1,6 +1,3 @@
-// services/api.js
-// Configuration de l'URL du backend selon l'environnement
-
 const getBackendURL = () => {
   // Production sur Vercel
   if (process.env.NODE_ENV === 'production') {
@@ -9,7 +6,7 @@ const getBackendURL = () => {
   }
   
   // Développement local
-  return 'http://localhost:5000/api';
+  return 'http://localhost:5001/api';
 };
 
 const API_BASE_URL = getBackendURL();

@@ -4,11 +4,11 @@ const productSchema = new mongoose.Schema({
   nom: { type: String, required: true },
   prix: { type: Number, required: true },
   
-  // 👈 ANCIEN (garde pour compatibilité existante)
+  // ANCIEN (garde pour compatibilité existante)
   image: { type: String },
   images: [{ type: String }],
   
-  // 👈 NOUVEAU CLOUDINARY
+  // NOUVEAU CLOUDINARY
   imageUrl: { type: String },        // URL Cloudinary
   imagePublicId: { type: String },   // ID pour suppression
   
