@@ -16,7 +16,7 @@ export default function NewArrivalsSection() {
     const fetchNewArrivals = async () => {
       try {
         setLoading(true);
-        // 👉 MODIFIEZ CETTE LIGNE - Utilisez API_URL au lieu de '/api'
+        // Vérifier si l'URL de l'API est définie
         const response = await fetch(`${API_URL}/products`);
         
         if (!response.ok) {
@@ -29,7 +29,7 @@ export default function NewArrivalsSection() {
         const sorted = data.sort((a: Product, b: Product) => 
           new Date(b.dateCreation).getTime() - new Date(a.dateCreation).getTime()
         );
-        setNewProducts(sorted.slice(0, 4));
+        setNewProducts(sorted.slice(0, 3));
       } catch (error) {
         console.error('Erreur lors du chargement des produits:', error);
         setError('Impossible de charger les produits. Vérifiez que le backend est accessible.');
@@ -51,7 +51,7 @@ export default function NewArrivalsSection() {
     );
   }
 
-  // 👈 AJOUTEZ CETTE SECTION POUR LES ERREURS
+  // Afficher un message d'erreur si le chargement échoue
   if (error) {
     return (
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
@@ -80,13 +80,13 @@ export default function NewArrivalsSection() {
         >
           <div className="flex items-center justify-center gap-2 mb-4">
             <Sparkles className="w-5 h-5 text-gray-600" />
-            <span className="text-sm font-medium tracking-wider text-gray-600">NEW DROP 2026</span>
+            <span className="text-sm font-medium tracking-wider text-gray-600">NEW DROP SUMMER 2026</span>
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">
             New Arrivals
           </h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            La nouvelle collection est arrivée. Des pièces uniques, en édition limitée.
+            La nouvelle collection Summer est arrivée. Des pièces uniques, en édition limitée.
           </p>
         </motion.div>
 

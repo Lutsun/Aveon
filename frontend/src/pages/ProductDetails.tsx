@@ -1,4 +1,3 @@
-// src/pages/ProductDetails.tsx
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Product } from '../components/ProductGrid';
