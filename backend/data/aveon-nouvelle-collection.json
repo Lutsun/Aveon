@@ -1,0 +1,285 @@
+[
+  {
+    "_id": {
+      "$oid": "6ae787305f47caf317bccf23"
+    },
+    "nom": "Aveon Spider Black",
+    "prix": {
+      "$numberInt": "10000"
+    },
+    "image": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557404/D670C5B4-4AC6-466A-B441-B8CD6787C0FB_h9unmv.png",
+    "imageUrl": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557404/D670C5B4-4AC6-466A-B441-B8CD6787C0FB_h9unmv.png",
+    "imagePublicId": "D670C5B4-4AC6-466A-B441-B8CD6787C0FB_h9unmv",
+    "images": [
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557404/D670C5B4-4AC6-466A-B441-B8CD6787C0FB_h9unmv.png",
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557410/D684AC48-894F-4802-9849-4758D5E3352E_cjx88l.png"
+    ],
+    "description": "T-shirt oversize noir en coton épais. Grande araignée tribale rouge imprimée au dos, logo AVEON rouge à l'avant et toile d'araignée en bas du t-shirt.",
+    "categorie": "tshirt",
+    "tailles": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "couleurs": [
+      "Noir"
+    ],
+    "stock": {
+      "$numberInt": "5"
+    },
+    "tags": [
+      "nouveau",
+      "bestseller",
+      "cotton"
+    ],
+    "dateCreation": {
+      "$date": "2026-11-01T18:00:07.000Z"
+    },
+    "__v": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ae78731c2a45043ceb9f756"
+    },
+    "nom": "Aveon Samurai Bloom",
+    "prix": {
+      "$numberInt": "10000"
+    },
+    "image": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557403/6B208B10-BB8A-41C0-9ECF-D95C74B69CED_qdvqks.png",
+    "imageUrl": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557403/6B208B10-BB8A-41C0-9ECF-D95C74B69CED_qdvqks.png",
+    "imagePublicId": "6B208B10-BB8A-41C0-9ECF-D95C74B69CED_qdvqks",
+    "images": [
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557403/6B208B10-BB8A-41C0-9ECF-D95C74B69CED_qdvqks.png",
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557406/E7B6ECBB-0C6C-4234-9531-EC8542ED0CA7_i6tr6r.png"
+    ],
+    "description": "T-shirt oversize noir en coton épais. Silhouette de femme samouraï sur soleil rose avec fleurs de cerisier imprimée au dos, logo AVEON rose à l'avant.",
+    "categorie": "tshirt",
+    "tailles": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "couleurs": [
+      "Noir"
+    ],
+    "stock": {
+      "$numberInt": "5"
+    },
+    "tags": [
+      "nouveau",
+      "bestseller",
+      "cotton"
+    ],
+    "dateCreation": {
+      "$date": "2026-11-01T18:00:06.000Z"
+    },
+    "__v": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ae787323b8bd509f9a55538"
+    },
+    "nom": "Aveon Blah Blah Blah",
+    "prix": {
+      "$numberInt": "10000"
+    },
+    "image": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793556183/269FB295-E155-4624-B8BE-C9CCA1EDDCC0_atwl6a.png",
+    "imageUrl": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793556183/269FB295-E155-4624-B8BE-C9CCA1EDDCC0_atwl6a.png",
+    "imagePublicId": "269FB295-E155-4624-B8BE-C9CCA1EDDCC0_atwl6a",
+    "images": [
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793556183/269FB295-E155-4624-B8BE-C9CCA1EDDCC0_atwl6a.png",
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793556156/29912D92-5603-4891-9395-DAB445AA7056_xq2odx.png"
+    ],
+    "description": "T-shirt oversize blanc en coton épais. Typographie « BLAH BLAH BLAH » noire et lèvres rouges imprimées au dos, logo AVEON noir à l'avant.",
+    "categorie": "tshirt",
+    "tailles": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "couleurs": [
+      "Blanc"
+    ],
+    "stock": {
+      "$numberInt": "5"
+    },
+    "tags": [
+      "nouveau",
+      "bestseller",
+      "cotton"
+    ],
+    "dateCreation": {
+      "$date": "2026-11-01T18:00:05.000Z"
+    },
+    "__v": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ae787332fb92b1408d38e04"
+    },
+    "nom": "Aveon Make Dope Stuff",
+    "prix": {
+      "$numberInt": "10000"
+    },
+    "image": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793556203/60188A93-46D0-4633-8C9D-60387915EA1E_zbdmcf.png",
+    "imageUrl": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793556203/60188A93-46D0-4633-8C9D-60387915EA1E_zbdmcf.png",
+    "imagePublicId": "60188A93-46D0-4633-8C9D-60387915EA1E_zbdmcf",
+    "images": [
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793556203/60188A93-46D0-4633-8C9D-60387915EA1E_zbdmcf.png",
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793556180/0EDEAC8B-F3FC-4F5C-8E54-B5D3BD322EF9_qhdrcy.png"
+    ],
+    "description": "T-shirt oversize noir en coton épais. Lettrage graffiti « Make Dope Stuff Every Day » blanc et jaune imprimé au dos, logo AVEON jaune à l'avant.",
+    "categorie": "tshirt",
+    "tailles": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "couleurs": [
+      "Noir"
+    ],
+    "stock": {
+      "$numberInt": "5"
+    },
+    "tags": [
+      "nouveau",
+      "cotton"
+    ],
+    "dateCreation": {
+      "$date": "2026-11-01T18:00:04.000Z"
+    },
+    "__v": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ae7873450c886f895f3687c"
+    },
+    "nom": "Aveon Make Today Better",
+    "prix": {
+      "$numberInt": "10000"
+    },
+    "image": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557404/C0265026-8CFF-4D34-AE25-BA4E3E1D10A5_ubinfx.png",
+    "imageUrl": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557404/C0265026-8CFF-4D34-AE25-BA4E3E1D10A5_ubinfx.png",
+    "imagePublicId": "C0265026-8CFF-4D34-AE25-BA4E3E1D10A5_ubinfx",
+    "images": [
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557404/C0265026-8CFF-4D34-AE25-BA4E3E1D10A5_ubinfx.png",
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557402/0A3F682D-DED1-4ACD-891B-D68E2B2965BA_vrvclj.png"
+    ],
+    "description": "T-shirt oversize noir en coton épais. Typographie géométrique « You Make Today Better » en dégradé violet imprimée au dos, logo AVEON violet à l'avant.",
+    "categorie": "tshirt",
+    "tailles": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "couleurs": [
+      "Noir"
+    ],
+    "stock": {
+      "$numberInt": "5"
+    },
+    "tags": [
+      "nouveau",
+      "cotton"
+    ],
+    "dateCreation": {
+      "$date": "2026-11-01T18:00:03.000Z"
+    },
+    "__v": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ae7873571c4ee5058ce2cd2"
+    },
+    "nom": "Aveon Heritage Pattern",
+    "prix": {
+      "$numberInt": "10000"
+    },
+    "image": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557408/84AA2036-7C86-468E-9819-214ACC9D138B_izik41.png",
+    "imageUrl": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557408/84AA2036-7C86-468E-9819-214ACC9D138B_izik41.png",
+    "imagePublicId": "84AA2036-7C86-468E-9819-214ACC9D138B_izik41",
+    "images": [
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557408/84AA2036-7C86-468E-9819-214ACC9D138B_izik41.png",
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793557408/3C2E1448-857D-4455-8F05-7483D12A231D_fmdvdf.png"
+    ],
+    "description": "T-shirt oversize noir en coton épais. Grand motif géométrique d'inspiration africaine orange et blanc imprimé au dos, logo AVEON corail à l'avant.",
+    "categorie": "tshirt",
+    "tailles": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "couleurs": [
+      "Noir"
+    ],
+    "stock": {
+      "$numberInt": "5"
+    },
+    "tags": [
+      "nouveau",
+      "cotton"
+    ],
+    "dateCreation": {
+      "$date": "2026-11-01T18:00:02.000Z"
+    },
+    "__v": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ae7873643f268e90d1e0a96"
+    },
+    "nom": "Aveon Spider White",
+    "prix": {
+      "$numberInt": "10000"
+    },
+    "image": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793556181/756CC286-995F-49DC-B117-69229A135713_qkn5zf.png",
+    "imageUrl": "https://res.cloudinary.com/dnscer4cy/image/upload/v1793556181/756CC286-995F-49DC-B117-69229A135713_qkn5zf.png",
+    "imagePublicId": "756CC286-995F-49DC-B117-69229A135713_qkn5zf",
+    "images": [
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793556181/756CC286-995F-49DC-B117-69229A135713_qkn5zf.png",
+      "https://res.cloudinary.com/dnscer4cy/image/upload/v1793556156/29912D92-5603-4891-9395-DAB445AA7056_xq2odx.png"
+    ],
+    "description": "T-shirt oversize blanc en coton épais. Grande araignée tribale noire et rouge imprimée au dos, logo AVEON noir à l'avant.",
+    "categorie": "tshirt",
+    "tailles": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "couleurs": [
+      "Blanc"
+    ],
+    "stock": {
+      "$numberInt": "5"
+    },
+    "tags": [
+      "nouveau",
+      "cotton"
+    ],
+    "dateCreation": {
+      "$date": "2026-11-01T18:00:01.000Z"
+    },
+    "__v": {
+      "$numberInt": "0"
+    }
+  }
+]

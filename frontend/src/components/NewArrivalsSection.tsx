@@ -80,13 +80,13 @@ export default function NewArrivalsSection() {
         >
           <div className="flex items-center justify-center gap-2 mb-4">
             <Sparkles className="w-5 h-5 text-gray-600" />
-            <span className="text-sm font-medium tracking-wider text-gray-600">NEW DROP SUMMER 2026</span>
+            <span className="text-sm font-medium tracking-wider text-gray-600">NEW DROP 2026</span>
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">
             New Arrivals
           </h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            La nouvelle collection Summer est arrivée. Des pièces uniques, en édition limitée.
+            La nouvelle collection est arrivée. Des pièces uniques, en édition limitée.
           </p>
         </motion.div>
 
