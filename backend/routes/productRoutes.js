@@ -2,11 +2,21 @@ const express = require("express");
 const router = express.Router();
 const Product = require("../models/product");
 
+// Options de tri envoyées par la page Collection
+const SORT_OPTIONS = {
+  nouveautes: { dateCreation: -1, _id: 1 },
+  "prix-croissant": { prix: 1, dateCreation: -1, _id: 1 },
+  "prix-decroissant": { prix: -1, dateCreation: -1, _id: 1 },
+};
+
 // 🔹 Obtenir tous les produits
 router.get("/", async (req, res) => {
   try {
     console.log("🔍 Récupération des produits...");
-    const produits = await Product.find().sort({ dateCreation: -1 });
+    const sort = Object.hasOwn(SORT_OPTIONS, req.query.sort)
+      ? SORT_OPTIONS[req.query.sort]
+      : SORT_OPTIONS.nouveautes;
+    const produits = await Product.find().sort(sort);
     console.log(`✅ ${produits.length} produits trouvés`);
     res.json(produits);
   } catch (error) {

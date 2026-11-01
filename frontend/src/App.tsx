@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import BonnetsTeaser from './components/BonnetsTeaser';
 import NewArrivalsSection from './components/NewArrivalsSection';
 import FeaturedSection from './components/FeaturedSection';
 import Footer from './components/Footer';
@@ -37,6 +38,7 @@ function App() {
               <Route path="/" element={
                 <>
                   <Hero />
+                  <BonnetsTeaser />
                   <NewArrivalsSection />
                   <FeaturedSection />
                 </>
